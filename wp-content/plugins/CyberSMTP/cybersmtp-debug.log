@@ -283,3 +283,5 @@ wp_mail error: SMTP Error: Could not connect to SMTP host. Failed to connect to 
 wp_mail error: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for smtp.example.com failed: Name or service not known
 wp_mail error: Invalid address:  (to): 
 wp_mail error: Invalid address:  (to): 
+wp_mail error: Invalid address:  (to): 
+wp_mail error: Invalid address:  (to): 
