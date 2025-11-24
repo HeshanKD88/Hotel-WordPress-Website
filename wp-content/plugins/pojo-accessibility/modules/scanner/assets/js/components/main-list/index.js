@@ -4,7 +4,7 @@ import { useScannerWizardContext } from '@ea11y-apps/scanner/context/scanner-wiz
 import { StyledBlockButtonsBox } from '@ea11y-apps/scanner/styles/app.styles';
 
 export const MainList = () => {
-	const { sortedViolations, altTextData, manualData } =
+	const { sortedViolations, altTextData, manualData, getHeadingsStats } =
 		useScannerWizardContext();
 
 	const scannerFixExist = sortedViolations.altText.length > 0;
@@ -19,16 +19,21 @@ export const MainList = () => {
 					return [];
 				}
 				const itemsData =
-					key === BLOCKS.altText ? altTextData : manualData[key];
+					key === BLOCKS.altText ? altTextData.main : manualData[key];
 
 				const resolved =
 					itemsData?.filter((item) => item?.resolved === true).length || 0;
+
+				const count =
+					key === BLOCKS.headingStructure
+						? getHeadingsStats().error
+						: sortedViolations[key].length - resolved;
 
 				return (
 					<BlockButton
 						key={key}
 						title={BLOCK_TITLES[key]}
-						count={sortedViolations[key].length - resolved}
+						count={count}
 						block={BLOCKS[key]}
 					/>
 				);

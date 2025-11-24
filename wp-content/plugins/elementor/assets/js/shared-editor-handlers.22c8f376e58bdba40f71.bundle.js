@@ -1,4 +1,3 @@
-/*! elementor - v3.31.0 - 27-08-2025 */
 "use strict";
 (self["webpackChunkelementorFrontend"] = self["webpackChunkelementorFrontend"] || []).push([["shared-editor-handlers"],{
 

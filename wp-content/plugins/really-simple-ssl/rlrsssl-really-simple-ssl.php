@@ -3,7 +3,7 @@
  * Plugin Name: Really Simple Security
  * Plugin URI: https://really-simple-ssl.com
  * Description: Easily improve site security with WordPress Hardening, Two-Factor Authentication (2FA), Login Protection, Vulnerability Detection and SSL certificate generation.
- * Version: 9.5.0
+ * Version: 9.5.3.2
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author: Really Simple Security
@@ -27,6 +27,10 @@
 */
 
 defined('ABSPATH') or die("you do not have access to this page!");
+
+if ( ! defined( 'rsssl_file' ) ) {
+    define( 'rsssl_file', __FILE__ );
+}
 
 if (!function_exists('rsssl_activation_check')) {
     function rsssl_activation_check()
@@ -65,6 +69,7 @@ if ( class_exists('REALLY_SIMPLE_SSL') ) {
         public $mailer_admin;
         public $site_health;
         public $vulnerabilities;
+        public $settingsConfigService;
 
         private function __construct()
         {
@@ -91,10 +96,14 @@ if ( class_exists('REALLY_SIMPLE_SSL') ) {
                     self::$instance->server = new rsssl_server();
                     self::$instance->admin = new rsssl_admin();
                     self::$instance->mailer_admin = new rsssl_mailer_admin();
-                    self::$instance->onboarding = new rsssl_onboarding();
                     self::$instance->progress = new rsssl_progress();
                     self::$instance->certificate = new rsssl_certificate();
                     self::$instance->site_health = new rsssl_site_health();
+
+                    if (class_exists('\ReallySimplePlugins\RSS\Core\Services\SettingsConfigService')) {
+                        self::$instance->settingsConfigService = new \ReallySimplePlugins\RSS\Core\Services\SettingsConfigService();
+                    }
+
                     if ( defined( 'WP_CLI' ) && WP_CLI ) {
                         self::$instance->wp_cli = new rsssl_wp_cli();
                     }
@@ -110,10 +119,7 @@ if ( class_exists('REALLY_SIMPLE_SSL') ) {
             define('rsssl_path', trailingslashit(plugin_dir_path(__FILE__)));
             define('rsssl_template_path', trailingslashit(plugin_dir_path(__FILE__)).'grid/templates/');
             define('rsssl_plugin', plugin_basename(__FILE__));
-            if ( !defined('rsssl_file') ){
-                define('rsssl_file', __FILE__);
-            }
-            define('rsssl_version', '9.5.0');
+            define('rsssl_version', '9.5.3.2');
             define('rsssl_le_cron_generation_renewal_check', 20);
             define('rsssl_le_manual_generation_renewal_check', 15);
         }
@@ -133,7 +139,6 @@ if ( class_exists('REALLY_SIMPLE_SSL') ) {
                 require_once( rsssl_path . 'upgrade.php');
                 require_once( rsssl_path . 'settings/settings.php' );
                 require_once( rsssl_path . 'modal/modal.php' );
-                require_once( rsssl_path . 'onboarding/class-onboarding.php' );
                 require_once( rsssl_path . 'placeholders/class-placeholder.php' );
                 require_once( rsssl_path . 'class-admin.php');
                 require_once( rsssl_path . 'mailer/class-mail-admin.php');
@@ -223,6 +228,10 @@ if ( !defined('RSSSL_DEACTIVATING_ALTERNATE')
         return REALLY_SIMPLE_SSL::instance();
     }
     add_action('plugins_loaded', 'RSSSL', 8);
+
+    if (file_exists(__DIR__  . '/core/really-simple-security-core.php')) {
+        require_once __DIR__  . '/core/really-simple-security-core.php';
+    }
 }
 
 if ( ! function_exists('rsssl_add_manage_security_capability')){
@@ -253,7 +262,6 @@ if ( ! function_exists( 'rsssl_user_can_manage' ) ) {
         if ( defined( 'WP_CLI' ) && WP_CLI ){
             return true;
         }
-
         return false;
     }
 }
@@ -268,46 +276,46 @@ if ( !function_exists('rsssl_admin_logged_in')){
 
 
 if ( ! function_exists( 'rsssl_is_logged_in_rest' ) ) {
-	function rsssl_is_logged_in_rest() {
-		// Check if the request URI is valid
-		if (!isset($_SERVER['REQUEST_URI'])) {
-			return false;
-		}
+    function rsssl_is_logged_in_rest() {
+        // Check if the request URI is valid
+        if (!isset($_SERVER['REQUEST_URI'])) {
+            return false;
+        }
 
-		$request_uri = $_SERVER['REQUEST_URI'];
+        $request_uri = $_SERVER['REQUEST_URI'];
 
-		// Check for a direct REST API path
-		if (strpos($request_uri, '/reallysimplessl/v1/') !== false) {
-			return is_user_logged_in();
-		}
+        // Check for a direct REST API path
+        if (strpos($request_uri, '/really-simple-security/v1/') !== false) {
+            return is_user_logged_in();
+        }
 
-		// Check for rest_route parameter with reallysimplessl (plain permalinks)
-		if (strpos($request_uri, 'rest_route=') !== false &&
-		    strpos($request_uri, 'reallysimplessl') !== false) {
-			return is_user_logged_in();
-		}
+        // Check for rest_route parameter with really-simple-security (plain permalinks)
+        if (strpos($request_uri, 'rest_route=') !== false &&
+            strpos($request_uri, 'really-simple-security') !== false) {
+            return is_user_logged_in();
+        }
 
-		return false;
-	}
+        return false;
+    }
 }
 
 if ( ! function_exists( 'rsssl_maybe_activate_recommended_features_extendify' ) ) {
-	function rsssl_maybe_activate_recommended_features_extendify() {
-		if ( get_option( 'rsssl_activated_recommended_features_extendify' ) || ! defined( 'EXTENDIFY_PARTNER_ID' ) || defined( 'rsssl_pro' ) ) {
-			return;
-		}
+    function rsssl_maybe_activate_recommended_features_extendify() {
+        if ( get_option( 'rsssl_activated_recommended_features_extendify' ) || ! defined( 'EXTENDIFY_PARTNER_ID' ) || defined( 'rsssl_pro' ) ) {
+            return;
+        }
 
-		try {
-			RSSSL()->admin->activate_recommended_features();
-		} catch ( Exception $e ) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( 'Really Simple Security: recommended features activation failed: ' . $e->getMessage() );
-				return;
-			}
-		}
+        try {
+            RSSSL()->admin->activate_recommended_features();
+        } catch ( Exception $e ) {
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log( 'Really Simple Security: recommended features activation failed: ' . $e->getMessage() );
+                return;
+            }
+        }
 
-		update_option( 'rsssl_activated_recommended_features_extendify', true );
-	}
+        update_option( 'rsssl_activated_recommended_features_extendify', true );
+    }
 
-	add_action( 'admin_init', 'rsssl_maybe_activate_recommended_features_extendify', 99 );
+    add_action( 'admin_init', 'rsssl_maybe_activate_recommended_features_extendify', 99 );
 }

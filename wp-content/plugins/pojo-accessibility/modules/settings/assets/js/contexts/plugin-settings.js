@@ -29,12 +29,26 @@ export const PluginSettingsProvider = ({ children }) => {
 					);
 				}
 
+				if ('closeOnboardingModal' in settings) {
+					settings.closeOnboardingModal = Boolean(
+						settings.closeOnboardingModal,
+					);
+				}
+
 				if ('isUrlMismatch' in settings) {
 					settings.isUrlMismatch = Boolean(settings.isUrlMismatch);
 				}
 
 				if ('unfilteredUploads' in settings) {
 					settings.unfilteredUploads = Boolean(settings.unfilteredUploads);
+				}
+
+				if ('homeUrl' in settings) {
+					settings.homeUrl = settings.homeUrl;
+				}
+
+				if ('whatsNewDataHash' in settings) {
+					settings.whatsNewDataHash = Boolean(settings.whatsNewDataHash);
 				}
 
 				setPluginSettings(settings);

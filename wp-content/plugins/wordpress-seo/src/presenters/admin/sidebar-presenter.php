@@ -18,7 +18,7 @@ class Sidebar_Presenter extends Abstract_Presenter {
 	 * @return string The sidebar HTML.
 	 */
 	public function present() {
-		$title = \__( '30% OFF - BLACK FRIDAY', 'wordpress-seo' );
+		$title = \__( 'BLACK FRIDAY | 30% OFF', 'wordpress-seo' );
 
 		$assets_uri            = \trailingslashit( \plugin_dir_url( \WPSEO_FILE ) );
 		$is_woocommerce_active = ( new WooCommerce_Conditional() )->is_met();
@@ -53,7 +53,7 @@ class Sidebar_Presenter extends Abstract_Presenter {
 					<?php
 					if (
 						\YoastSEO()->classes->get( Promotion_Manager::class )
-							->is( 'black-friday-2024-promotion' ) ) :
+							->is( 'black-friday-promotion' ) ) :
 						?>
 						<div class="sidebar__sale_banner_container">
 							<div class="sidebar__sale_banner">
@@ -63,26 +63,13 @@ class Sidebar_Presenter extends Abstract_Presenter {
 					<?php endif; ?>
 					<h2 class="yoast-get-premium-title">
 						<?php
-						if (
-							\YoastSEO()->classes->get( Promotion_Manager::class )
-								->is( 'black-friday-2024-promotion' ) ) {
-							/* translators: %1$s and %2$s expand to a span wrap to avoid linebreaks. %3$s expands to "Yoast SEO Premium". */
-							\printf( \esc_html__( '%1$sBuy%2$s %3$s', 'wordpress-seo' ), '<span>', '</span>', 'Yoast SEO Premium' );
-						}
-						else {
 							/* translators: %1$s and %2$s expand to a span wrap to avoid linebreaks. %3$s expands to "Yoast SEO Premium". */
 							echo ( $is_woocommerce_active ) ? \sprintf( \esc_html__( '%1$s%2$s %3$s', 'wordpress-seo' ), '<span>', '</span>', 'Yoast WooCommerce SEO' ) : \sprintf( \esc_html__( '%1$s%2$s %3$s', 'wordpress-seo' ), '<span>', '</span>', 'Yoast SEO Premium' );
-						}
 						?>
 					</h2>
-					<span> <?php echo \esc_html__( 'Now with Local, News & Video SEO + 1 Google Docs seat!', 'wordpress-seo' ); ?></span>
+					<span>
 					<?php
-					if ( \YoastSEO()->classes->get( Promotion_Manager::class )->is( 'black-friday-2024-promotion' ) ) {
-						echo '<p>';
-						echo \esc_html__( 'If you were thinking about upgrading, now\'s the time! 30% OFF ends 3rd Dec 11am (CET)', 'wordpress-seo' );
-						echo '</p>';
-					}
-					else {
+						echo ( $is_woocommerce_active ) ? \esc_html__( 'SEO that scales with your product catalog.', 'wordpress-seo' ) : \esc_html__( 'Now with Local, News & Video SEO + 1 Google Docs seat!', 'wordpress-seo' );
 						echo '<ul>';
 						echo '<li>' . \esc_html__( 'AI tools included', 'wordpress-seo' ) . '</li>';
 						echo '<li>';
@@ -91,7 +78,6 @@ class Sidebar_Presenter extends Abstract_Presenter {
 						echo '</li>';
 						echo '<li>' . \esc_html__( '24/7 support', 'wordpress-seo' ) . '</li>';
 						echo '</ul>';
-					}
 					?>
 					<p class="plugin-buy-button">
 						<a class="yoast-button-upsell" data-action="load-nfd-ctb"
@@ -100,8 +86,8 @@ class Sidebar_Presenter extends Abstract_Presenter {
 							<?php
 							if (
 								\YoastSEO()->classes->get( Promotion_Manager::class )
-									->is( 'black-friday-2024-promotion' ) ) {
-								echo \esc_html__( 'Buy now', 'wordpress-seo' );
+									->is( 'black-friday-promotion' ) ) {
+								echo \esc_html__( 'Buy now for 30% off', 'wordpress-seo' );
 							}
 							else {
 								echo \esc_html__( 'Buy now', 'wordpress-seo' );
@@ -111,9 +97,8 @@ class Sidebar_Presenter extends Abstract_Presenter {
 						</a>
 					</p>
 					<p class="yoast-price-micro-copy">
-
 						<?php
-						echo \esc_html__( '30-day money back guarantee.', 'wordpress-seo' );
+							echo \esc_html__( '30-day money back guarantee.', 'wordpress-seo' );
 						?>
 					</p>
 					<hr class="yoast-upsell-hr" aria-hidden="true">
@@ -162,11 +147,21 @@ class Sidebar_Presenter extends Abstract_Presenter {
 					?>
 				</p>
 				<p>
-					<a href="<?php echo \esc_url( $academy_shortlink ); ?>" target="_blank">
+					<a href="<?php echo \esc_url( $academy_shortlink ); ?>" style="font-weight: 500" target="_blank">
 						<?php
 						/* translators: %1$s expands to Yoast SEO academy */
 						\printf( \esc_html__( 'Check out %1$s', 'wordpress-seo' ), 'Yoast SEO academy' );
 						?>
+						<span class="screen-reader-text">
+							<?php
+							/* translators: Hidden accessibility text. */
+							\printf( \esc_html__( '(Opens in a new browser tab)', 'wordpress-seo' ) );
+							?>
+						</span>
+						<img
+							src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="9" viewBox="0 0 10 9" fill="none"><path d="M3.99951 1.49988H1.99951C1.44723 1.49988 0.999512 1.94759 0.999512 2.49988V7.49988C0.999512 8.05216 1.44723 8.49988 1.99951 8.49988H6.99951C7.5518 8.49988 7.99951 8.05216 7.99951 7.49988V5.49988M5.99951 0.499878H8.99951M8.99951 0.499878V3.49988M8.99951 0.499878L3.99951 5.49988" stroke="%230085ba" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+							alt="" aria-hidden="true" width="10" height="9"
+						/>
 					</a>
 				</p>
 			</div>

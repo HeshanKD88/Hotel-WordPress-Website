@@ -76,8 +76,6 @@ class SeedProd_Lite_Render {
 					} else {
 						add_action( 'template_redirect', array( &$this, 'render_comingsoon_page' ), $priority );
 					}
-
-					add_action( 'admin_bar_menu', 'seedprod_lite_admin_bar_menu', 999 );
 				}
 				add_action( 'init', array( &$this, 'remove_ngg_print_scripts' ) );
 			}
@@ -192,6 +190,13 @@ class SeedProd_Lite_Render {
 		$sql       = "SELECT * FROM $tablename WHERE id= %d";
 		$safe_sql  = $wpdb->prepare( $sql, absint( $page_id ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$page      = $wpdb->get_row( $safe_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		// Check if this page has been converted from legacy to native blocks
+		$is_converted = get_post_meta( $page_id, '_seedprod_converted_from_legacy', true );
+		if ( '1' === $is_converted || 1 === $is_converted ) {
+			// Page has been converted - process WordPress native blocks
+			$page->post_content = do_blocks( $page->post_content );
+		}
 
 		$settings = json_decode( $page->post_content_filtered );
 

@@ -22,7 +22,7 @@ require_once(rsssl_path.'settings/config/disable-fields-filter.php');
  */
 function rsssl_fix_rest_url_for_wpml($url, $path, $blog_id, $scheme)
 {
-	if (strpos($url, 'reallysimplessl/v') === false) {
+	if (strpos($url, 'really-simple-security/v') === false) {
 		return $url;
 	}
 
@@ -258,7 +258,7 @@ function rsssl_settings_rest_route()
 		return;
 	}
 
-	register_rest_route('reallysimplessl/v1', 'fields/get', array(
+	register_rest_route('really-simple-security/v1', 'fields/get', array(
 		'methods' => 'GET',
 		'callback' => 'rsssl_rest_api_fields_get',
 		'permission_callback' => function () {
@@ -266,7 +266,7 @@ function rsssl_settings_rest_route()
 		}
 	));
 
-	register_rest_route('reallysimplessl/v1', 'fields/set', array(
+	register_rest_route('really-simple-security/v1', 'fields/set', array(
 		'methods' => 'POST',
 		'callback' => 'rsssl_rest_api_fields_set',
 		'permission_callback' => function () {
@@ -274,7 +274,7 @@ function rsssl_settings_rest_route()
 		}
 	));
 
-	register_rest_route('reallysimplessl/v1', 'tests/(?P<test>[a-z\_\-]+)', array(
+	register_rest_route('really-simple-security/v1', 'tests/(?P<test>[a-z\_\-]+)', array(
 		'methods' => 'GET',
 		'callback' => 'rsssl_run_test',
 		'permission_callback' => function () {
@@ -282,7 +282,7 @@ function rsssl_settings_rest_route()
 		}
 	));
 
-	register_rest_route('reallysimplessl/v1', 'do_action/(?P<action>[a-z\_\-]+)', array(
+	register_rest_route('really-simple-security/v1', 'do_action/(?P<action>[a-z\_\-]+)', array(
 		'methods' => 'POST',
 		'callback' => 'rsssl_do_action',
 		'permission_callback' => function () {
@@ -371,7 +371,7 @@ function rsssl_do_action($request, $ajax_data = false)
             }
 			break;
 		default:
-			$response = apply_filters("rsssl_do_action", [], $action, $data);
+            $response = apply_filters("rsssl_do_action", [], $action, $data);
 	}
 
 	if (is_array($response)) {
@@ -430,6 +430,11 @@ function rsssl_plugin_actions($data)
 	}
 	$slug = sanitize_title($data['slug']);
 	$action = sanitize_title($data['pluginAction']);
+
+    if (class_exists('rsssl_installer') === false) {
+        require_once( rsssl_path . 'class-installer.php');
+    }
+
 	$installer = new rsssl_installer($slug);
 	if ($action === 'download') {
 		$installer->download_plugin();
@@ -526,6 +531,10 @@ function rsssl_other_plugins_data($slug = false)
 			'title' => 'SimplyBook.me - ' . __("Online Booking System", "really-simple-ssl"),
 		],
 	);
+
+    if (class_exists('rsssl_installer') === false) {
+        require_once( rsssl_path . 'class-installer.php');
+    }
 
 	foreach ($plugins as $index => $plugin) {
 		$installer = new rsssl_installer($plugin['slug']);

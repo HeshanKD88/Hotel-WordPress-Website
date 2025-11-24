@@ -23,6 +23,7 @@ namespace RSSSL\Security {
 	 *  – reading/writing rules,
 	 *  – recording history,
 	 *  – cooperating with WP Rocket.
+	 *  – will no longer auto-create a missing .htaccess (opt-in via `rsssl_allow_create_htaccess`).
 	 */
 class RSSSL_Htaccess_File_Manager {
 
@@ -77,7 +78,7 @@ class RSSSL_Htaccess_File_Manager {
             return apply_filters('rsssl_htaccess_file_path', $defaultPath);
         }
 
-        // Fallback to WP_CONTENT_DIR/.htaccess
+        // Fallback to WP_CONTENT_DIR/.htaccess (path only; file will not be auto-created)
         $contentPath = apply_filters('rsssl_wp_content_htaccess_path', WP_CONTENT_DIR . '/.htaccess');
         return apply_filters('rsssl_htaccess_file_path', $contentPath);
     }
@@ -185,7 +186,13 @@ class RSSSL_Htaccess_File_Manager {
 	        $result = $this->write_top_marker_block( $markerName, $lines );
 	    } else {
 	        // WP core will preserve everything outside of your marker
-	        $result = insert_with_markers( $this->htaccess_file_path, $markerName, $lines );
+		    $probe = $this->get_htaccess_content();
+		    if ( $this->is_effectively_empty( $probe ) ) {
+			    $result = false;
+		    } else {
+			    // WP core will preserve everything outside of your marker
+			    $result = insert_with_markers( $this->htaccess_file_path, $markerName, $lines );
+		    }
 	    }
 
 	    if ( $result ) {
@@ -201,28 +208,38 @@ class RSSSL_Htaccess_File_Manager {
 	 */
 	private function ensure_htaccess_is_writable(): bool
 	{
-		$dir = dirname( $this->htaccess_file_path );
+	    $dir = dirname( $this->htaccess_file_path );
 
-		if ( ! is_dir( $dir ) && ! wp_mkdir_p( $dir ) ) {
-			$this->log_error( 'Cannot create directory for .htaccess at: ' . esc_html( $dir ) );
-			return false;
-		}
+	    // Ensure the directory exists (same as before)
+	    if ( ! is_dir( $dir ) && ! wp_mkdir_p( $dir ) ) {
+	        $this->log_error( 'Cannot create directory for .htaccess at: ' . esc_html( $dir ) );
+	        return false;
+	    }
 
-		if ( ! is_file( $this->htaccess_file_path ) ) {
-			if ( @file_put_contents( $this->htaccess_file_path, '' ) === false ) {
-				$this->log_error( 'Could not create .htaccess file at: ' . esc_html( $this->htaccess_file_path ) );
-				return false;
-			} else {
-				$this->log_error( 'Created new .htaccess file at: ' . esc_html( $this->htaccess_file_path ) );
-			}
-		}
+	    // Do **not** create a new .htaccess automatically anymore.
+	    // This previously led to empty files overwriting existing rewrite rules in some environments.
+	    // If a site really wants us to create the file, they must opt in via the filter below.
+	    if ( ! is_file( $this->htaccess_file_path ) ) {
+	        $allow_create = apply_filters( 'rsssl_allow_create_htaccess', false, $this->htaccess_file_path );
+	        if ( $allow_create ) {
+	            if ( @file_put_contents( $this->htaccess_file_path, '' ) === false ) {
+	                $this->log_error( 'Could not create .htaccess file at: ' . esc_html( $this->htaccess_file_path ) );
+	                return false;
+	            } else {
+	                $this->log_error( 'Created new .htaccess file at: ' . esc_html( $this->htaccess_file_path ) );
+	            }
+	        } else {
+	            $this->log_error( '.htaccess file does not exist and automatic creation is disabled. Path: ' . esc_html( $this->htaccess_file_path ) );
+	            return false;
+	        }
+	    }
 
-		if ( ! is_writable( $this->htaccess_file_path ) ) {
-			$this->log_error( '.htaccess file is not writable at: ' . esc_html( $this->htaccess_file_path ) );
-			return false;
-		}
+	    if ( ! is_writable( $this->htaccess_file_path ) ) {
+	        $this->log_error( '.htaccess file is not writable at: ' . esc_html( $this->htaccess_file_path ) );
+	        return false;
+	    }
 
-		return true;
+	    return true;
 	}
 
     /**
@@ -236,6 +253,10 @@ class RSSSL_Htaccess_File_Manager {
     {
         // Preserve original content for history
         $originalHtaccess = $this->get_htaccess_content() ?: '';
+	    // SAFETY: if .htaccess is (effectively) empty or unreadable, do not write our markers
+	    if ( $this->is_effectively_empty( $originalHtaccess ) ) {
+		    return false;
+	    }
 		// we remove the redirect marker block if it exists, so we can write a new one
 	    // this is needed because the redirect marker block is not removed by insert_with_markers
 	    // We added this function because not on every save we can determine when to remove options when the rule is not present.
@@ -319,13 +340,24 @@ class RSSSL_Htaccess_File_Manager {
 	 */
 	private function save_htaccess_if_changed(string $original, string $modified, string $markerName): bool
 	{
-		if ($modified === $original) {
+		if ( $modified === $original ) {
 			return true;
 		}
 
-		$cleaned = $this->cleanupEmptyLines($modified);
-		@file_put_contents($this->htaccess_file_path, $cleaned, LOCK_EX);
-		$this->record_history($original, $cleaned, $markerName);
+		// SAFETY: do not write when the current .htaccess is effectively empty
+		if ( $this->is_effectively_empty( $original ) ) {
+			return false;
+		}
+
+		$cleaned = $this->cleanupEmptyLines( $modified );
+
+		// Avoid writing an empty result
+		if ( $this->is_effectively_empty( $cleaned ) ) {
+			return true;
+		}
+
+		@file_put_contents( $this->htaccess_file_path, $cleaned, LOCK_EX );
+		$this->record_history( $original, $cleaned, $markerName );
 
 		return true;
 	}
@@ -444,6 +476,11 @@ public function clear_legacy_rule(string $marker): bool
         return false;
     }
 
+	// SAFETY: if the file is effectively empty, do not attempt to rewrite it
+	if ( $this->is_effectively_empty( $content ) ) {
+		return false;
+	}
+
     // Match and remove the block with the exact marker name
     $escaped = preg_quote($marker, '/');
     $pattern = '/^#+\s*Begin\s+' . $escaped . '.*?^#+\s*End\s+' . $escaped . '.*?$/ms';
@@ -456,7 +493,7 @@ public function clear_legacy_rule(string $marker): bool
     }
 
     // Write the updated content back to the .htaccess file
-    if ($new_content !== $content && empty( trim( $new_content ) ) === false) {
+    if ( $new_content !== $content && ! $this->is_effectively_empty( $new_content ) ) {
         return file_put_contents($this->htaccess_file_path, $new_content) !== false;
     }
 
@@ -561,5 +598,15 @@ public function clear_legacy_rule(string $marker): bool
         $content = preg_replace( array( "/\r\n?/", "/\n{3,}/" ), array( "\n", "\n\n" ), $content );
         return $content;
     }
+
+	/**
+	 * Checks if the given content is effectively empty (only whitespace).
+	 */
+	private function is_effectively_empty( $content ): bool {
+		if ( $content === null || $content === false ) {
+			return true;
+		}
+		return trim( (string) $content ) === '';
+	}
 }
 }

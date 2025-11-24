@@ -6,7 +6,7 @@ import { styled, ThemeProvider } from '@elementor/ui/styles';
 import {
 	ConnectModal,
 	MenuItems,
-	Notifications,
+	OnboardingModal,
 	PostConnectModal,
 	UrlMismatchModal,
 } from '@ea11y/components';
@@ -16,6 +16,7 @@ import {
 	useSettings,
 } from '@ea11y/hooks';
 import { Sidebar, TopBar } from '@ea11y/layouts';
+import Notifications from '@ea11y-apps/global/components/notifications';
 import { mixpanelEvents, mixpanelService } from '@ea11y-apps/global/services';
 import { useEffect } from '@wordpress/element';
 import { usePluginSettingsContext } from './contexts/plugin-settings';
@@ -52,6 +53,7 @@ const App = () => {
 				)}
 				{isConnected && !closePostConnectModal && <PostConnectModal />}
 				{isUrlMismatch && !isConnected && <UrlMismatchModal />}
+				<OnboardingModal />
 
 				<TopBar />
 

@@ -9,7 +9,7 @@ import ListSubheader from '@elementor/ui/ListSubheader';
 import Tooltip from '@elementor/ui/Tooltip';
 import { styled } from '@elementor/ui/styles';
 import { useSettings } from '@ea11y/hooks';
-import CrownFilled from '@ea11y/icons/crown-filled';
+import CrownFilled from '@ea11y-apps/global/icons/crown-filled';
 import { mixpanelEvents, mixpanelService } from '@ea11y-apps/global/services';
 import { Fragment, useState } from '@wordpress/element';
 
@@ -37,7 +37,7 @@ const MenuItem = ({ keyName, item }) => {
 		window.location.hash = parentKey;
 
 		mixpanelService.sendEvent(mixpanelEvents.menuButtonClicked, {
-			buttonName: itemName,
+			buttonName: childKey || parentKey,
 		});
 	};
 
@@ -47,7 +47,7 @@ const MenuItem = ({ keyName, item }) => {
 			[itemKey]: !prev[itemKey], // Toggle the expanded state for the clicked item
 		}));
 		mixpanelService.sendEvent(mixpanelEvents.menuButtonClicked, {
-			buttonName: itemName,
+			buttonName: itemKey,
 		});
 	};
 
@@ -116,7 +116,7 @@ const MenuItem = ({ keyName, item }) => {
 					{showProIcon(item) && openSidebar && (
 						<ListItemIcon>
 							<StyledChip
-								color="accent"
+								color="promotion"
 								variant="standard"
 								icon={<CrownFilled size="tiny" />}
 							/>

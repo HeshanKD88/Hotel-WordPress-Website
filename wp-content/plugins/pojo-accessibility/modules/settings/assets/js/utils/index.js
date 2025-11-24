@@ -1,25 +1,3 @@
-import { createElement } from '@wordpress/element';
-
-export const injectTemplateVars = (message, components) => {
-	const regex = /\{\{(\w+)\}\}([^]*?)\{\{\/\1\}\}/g;
-	const splitMessage = message.split(regex);
-
-	// eslint-disable-next-line array-callback-return
-	return splitMessage.map((part, index) => {
-		if (index % 3 === 0) {
-			return part;
-		}
-
-		if (index % 3 === 1) {
-			return createElement(
-				components[part],
-				{ key: index },
-				splitMessage[index + 1],
-			);
-		}
-	});
-};
-
 export const validateUrl = (url) => {
 	const pattern =
 		/^(https?):\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/.*)?$/i;
@@ -69,11 +47,13 @@ export const calculatePlanUsage = (allowed, used) => {
  */
 export const formatPlanValue = (value) => {
 	if (value >= 1000000) {
-		return `${Math.floor(value / 1000000)}M`;
+		const millions = value / 1000000;
+		return millions % 1 === 0 ? `${millions}M` : `${millions.toFixed(1)}M`;
 	}
 
 	if (value >= 1000) {
-		return `${Math.floor(value / 1000)}K`;
+		const thousands = value / 1000;
+		return thousands % 1 === 0 ? `${thousands}K` : `${thousands.toFixed(1)}K`;
 	}
 
 	return value;

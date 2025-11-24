@@ -4,8 +4,8 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.31.3
-Beta tag: 3.31.0-beta2
+Stable tag: 3.33.1
+Beta tag: 3.33.0-beta4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -349,59 +349,22 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.31.3 - 2025-08-27 =
+= 3.33.1 - 2025-11-17 =
 
-* Tweak: Disabled indication popover on repeater items – Editor V4
-* Tweak: Enforced numeric keys in `promotionWidgets` and ensured consistent Pro widget injection
-* Fix: Floating Bar disappears from the frontend after activating Elementor Pro
+* Security Fix: Improved code security enforcement in Floating Elements
 
-= 3.31.2 - 2025-08-11 =
+= 3.33.0 - 2025-11-10 =
 
-* Tweak: Improved permissions functionality in Class Management - Editor V4
-* Fix: Page failed to save on certain hosting providers due to blocked requests – Editor V4 ([#31992](https://github.com/elementor/elementor/issues/31992))
-* Fix: Renaming a class causes it to lose applied styles – Editor V4
-* Fix: Inherited values not working as expected with custom units in responsive modes – Editor V4
-* Fix: Visual Choose control not displaying properly in Firefox for Shape Divider
-* Fix: Icon alignment not working in Icon Box widget
-
-= 3.31.1 - 2025-08-06 =
-
-* Tweak: Updated `form-data` package version
-* Fix: Custom order field disappeared when set to 0 or cleared - Editor V4
-
-= 3.31.0 - 2025-08-05 =
-
-* New: Introducing Variables - define reusable color and font values to ensure consistent and scalable design across your site - Editor V4
-* New: Introducing Inherited Values - style properties now indicate when values are inherited from Classes or Base styles - Editor V4
-* New: Introducing Filters - add visual effects like blur, brightness, and contrast with full design control - Editor V4
-* New: Introducing Backdrop Filters - apply visual effects behind elements for layered design - Editor V4
-* New: Introducing Divider - a modular layout element for visual separation - Editor V4
-* New: Class Usage Overview – gain insights into class usage directly from the Class Manager - Editor V4
-* New: Class Locator - locate all elements using a specific class across your design - Editor V4
-* Tweak: Removed background videos from the accessibility tree to improve screen reader behavior ([#23880](https://github.com/elementor/elementor/issues/23880))
-* Tweak: Search by Class name - quickly locate existing classes in the Class Manager - Editor V4
-* Tweak: Improved style detection across breakpoints when using Classes - Editor V4
-* Tweak: Added Custom option to Object Position in Size section - Editor V4
-* Tweak: Added ID control in YouTube element - Editor V4
-* Tweak: Added Opacity control - set element transparency - Editor V4
-* Tweak: Display Base Style indication - clearly shows when Base styles are applied to an element - Editor V4
-* Tweak: Improved drag and drop behavior into Flexbox and Div Blocks inside the Canvas - Editor V4
-* Tweak: Replaced select control with a visual choice control in Shape Dividers
-* Tweak: Replaced SASS mixins and functions with native CSS logical properties
-* Tweak: Added support for `lh` and `rlh` CSS units in Typography Line Height control
-* Tweak: Added responsive capabilities to Custom Mask
-* Tweak: Activated "Element Caching" experiment for all sites
-* Tweak: Updated Icon List widget to use CSS logical properties
-* Tweak: Updated Star Rating widget to use CSS logical properties
-* Tweak: Updated Alert widget to use CSS logical properties
-* Tweak: Updated Accordion widget to use CSS logical properties
-* Tweak: Updated Toggle widget to use CSS logical properties
-* Tweak: Updated Icon Box widget to use CSS logical properties
-* Tweak: Updated Menu Anchor widget to use CSS logical properties
-* Tweak: Updated Tabs widget to use CSS logical properties
-* Tweak: Updated Testimonial widget to use CSS logical properties
-* Tweak: Updated Text Editor widget to use CSS logical properties
-* Tweak: Updated Paragraph Spacing in Site Settings Typography to use CSS logical properties
-* Tweak: Optimized CSS output for Masks
+* New: Introducing Variables Manager to manage design variables like colors, fonts, and sizes from a centralized panel - Editor V4
+* New: Introducing Blend Mode control to create layered visual effects by defining how elements blend with backgrounds - Editor V4
+* New: Introducing Background Clipping control to define where an element's background is rendered across the element's layout - Editor V4
+* Tweak: Updated Editor Top Bar layout and button placement for improved navigation
+* Tweak: Adjusted default cache behavior to inactive and updated FAQ Schema notice in Accordion widget
+* Tweak: Improved error handling in Import and Export customization flow
+* Tweak: Applied CSS logical properties support in Star Rating widget
+* Tweak: Enhanced accessibility in Star Rating widget
+* Tweak: Updated minimum supported versions for Chrome, Firefox, and Safari
+* Fix: Child pages and menu items not importing correctly in Website Templates
+* Fix: Deprecated `utf8_encode()` and `utf8_decode()` functions replaced for PHP 8.2 compatibility ([#27499](https://github.com/elementor/elementor/issues/27499))
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
