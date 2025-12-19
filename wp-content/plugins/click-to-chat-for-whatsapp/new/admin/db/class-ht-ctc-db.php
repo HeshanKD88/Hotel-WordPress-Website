@@ -22,7 +22,7 @@ if ( ! class_exists( 'HT_CTC_DB' ) ) {
 		 *
 		 * @var array
 		 */
-		public $os = '';
+		public $os = array();
 
 		/**
 		 * Constructor.
@@ -91,6 +91,9 @@ if ( ! class_exists( 'HT_CTC_DB' ) ) {
 				// $values['google_analytics'] = '1';
 				$values['g_an']            = 'ga4';
 				$values['g_an_event_name'] = 'click to chat';
+
+				$values['gtm']            = '1';
+				$values['gtm_event_name'] = 'Click to Chat';
 
 				$values['fb_pixel']                  = '1';
 				$values['pixel_event_type']          = 'trackCustom';
@@ -235,6 +238,7 @@ if ( ! class_exists( 'HT_CTC_DB' ) ) {
 				'v3_28'              => $time,
 				'v3_31'              => $time,
 				'v4_3'               => $time,
+				'v4_34'              => $time,
 			);
 
 			$db_values = get_option( 'ht_ctc_plugin_details', array() );

@@ -1,12 +1,14 @@
 /* global gtag, ga, __gaTracker, dataLayer, gtag_report_conversion, fbq */
 // Click to Chat - Share
 
+/* global ht_ctc_share_var */
 /**
  * will create variable.. ht_ctc_share_var like.. ht_ctc_share_var ..
  */
 ( function htCtcShareModule ( $ ) {
 	// ready
 	$( function handleShareReady () {
+
 		var url = window.location.href;
 
 		var isMobile = 'no';
@@ -15,10 +17,10 @@
 			// Where user can install app.
 			// instead: /Android|webOS|...|Opera Mini/i.test(navigator.userAgent)
 			const mobileUserAgentPattern =
-					/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+				/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
 			if (
 				typeof navigator.userAgent !== 'undefined' &&
-					navigator.userAgent.match( mobileUserAgentPattern )
+				navigator.userAgent.match( mobileUserAgentPattern )
 			) {
 				isMobile = 'yes';
 				console.log( 'User agent: isMobile: ' + isMobile );
@@ -36,8 +38,8 @@
 				// if (/iPhone/.test(navigator.userAgent) && /CriOS/.test(navigator.userAgent)) {
 				// }
 			}
-		} catch ( e ) {
-			console.warn( 'navigator.userAgent unavailable while detecting share mode', e );
+		} catch ( error ) {
+			console.warn( 'navigator.userAgent unavailable while detecting share mode', error );
 		}
 
 		if ( 'no' === isMobile ) {
@@ -74,7 +76,7 @@
 			// shortcode
 			$( document )
 				.on( 'click', '.ht-ctc-sc-share', function handleShareShortcodeClick () {
-					data_link = this.getAttribute( 'data-ctc-link' );
+					var data_link = this.getAttribute( 'data-ctc-link' );
 					data_link = encodeURI( data_link );
 					window.open( data_link, '_blank', 'noopener' );
 
@@ -85,10 +87,10 @@
 		shareHtCtc();
 
 		// Hide based on device
-		function shareDisplay ( p ) {
-			const cssStyles = p.getAttribute( 'data-css' );
+		function shareDisplay ( element ) {
+			const cssStyles = element.getAttribute( 'data-css' );
 			if ( isMobile === 'yes' ) {
-				var display_mobile = p.getAttribute( 'data-display_mobile' );
+				var display_mobile = element.getAttribute( 'data-display_mobile' );
 				if ( 'show' === display_mobile ) {
 					// remove desktop style
 					var removeDesktopShare = document.querySelector( '.ht_ctc_desktop_share' );
@@ -96,12 +98,12 @@
 						removeDesktopShare.remove();
 					}
 
-					var position_mobile = p.getAttribute( 'data-position_mobile' );
-					p.style.cssText = position_mobile + cssStyles;
-					display( p );
+					var position_mobile = element.getAttribute( 'data-position_mobile' );
+					element.style.cssText = position_mobile + cssStyles;
+					display( element );
 				}
 			} else {
-				var display_desktop = p.getAttribute( 'data-display_desktop' );
+				var display_desktop = element.getAttribute( 'data-display_desktop' );
 				if ( 'show' === display_desktop ) {
 					// remove mobile style
 					var removeMobileShare = document.querySelector( '.ht_ctc_mobile_share' );
@@ -109,38 +111,40 @@
 						removeMobileShare.remove();
 					}
 
-					var position = p.getAttribute( 'data-position' );
-					p.style.cssText = position + cssStyles;
-					display( p );
+					var position = element.getAttribute( 'data-position' );
+					element.style.cssText = position + cssStyles;
+					display( element );
 				}
 			}
 		}
 
-		function display ( p ) {
+		function display ( element ) {
 			// p.style.display = "block";
 			try {
-				var dt = parseInt( p.getAttribute( 'data-show_effect' ) );
-				$( p )
+				var dt = parseInt( element.getAttribute( 'data-show_effect' ) );
+
+				// var dt = parseInt( element.getAttribute( 'data-show_effect' ), 10 );
+				$( element )
 					.show( dt );
-			} catch ( e ) {
-				console.warn( 'Share display fallback triggered', e );
-				p.style.display = 'block';
+			} catch ( error ) {
+				console.warn( 'Share display fallback triggered', error );
+				element.style.display = 'block';
 			}
 
 			// hover effect
-			ht_ctc_share_things( p );
+			ht_ctc_share_things( element );
 		}
 
-		function ht_ctc_share_things ( p ) {
+		function ht_ctc_share_things ( element ) {
 			// animations
-			var animateclass = p.getAttribute( 'data-an_type' );
-			var an_time = $( p )
+			var animateclass = element.getAttribute( 'data-an_type' );
+			var an_time = $( element )
 				.hasClass( 'ht_ctc_entry_animation' ) ?
 				1200 :
 				120;
 
 			setTimeout( function runShareAnimation () {
-				p.classList.add( 'ht_ctc_animation', animateclass );
+				element.classList.add( 'ht_ctc_animation', animateclass );
 			}, an_time );
 
 			// hover effects

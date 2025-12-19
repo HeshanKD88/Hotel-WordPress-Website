@@ -319,7 +319,8 @@ if ( ! class_exists( 'HT_CTC_Chat' ) ) {
 
 			$analytics = ( isset( $othersettings['analytics'] ) ) ? esc_attr( $othersettings['analytics'] ) : 'all';
 
-			$ht_ctc_chat['css'] = "display: none; cursor: pointer; z-index: $zindex;";
+			// $ht_ctc_chat['css'] = "display: none; cursor: pointer; z-index: $zindex;";
+			$ht_ctc_chat['css'] = "cursor: pointer; z-index: $zindex;";
 
 			// analytics
 			$ht_ctc_os['is_ga_enable']    = 'yes';
@@ -372,6 +373,7 @@ if ( ! class_exists( 'HT_CTC_Chat' ) ) {
 			$style_mobile = sanitize_file_name( $style_mobile );
 			$path_m       = plugin_dir_path( HT_CTC_PLUGIN_FILE ) . 'new/inc/styles/style-' . $style_mobile . '.php';
 
+			// output : is in string ony '1', '4', '6', '8'
 			if ( '' === $call_to_action ) {
 				if ( '1' === $style || '4' === $style || '6' === $style || '8' === $style ) {
 					$call_to_action = 'WhatsApp us';
@@ -451,6 +453,15 @@ if ( ! class_exists( 'HT_CTC_Chat' ) ) {
 			if ( 'yes' === $ht_ctc_os['is_ga_enable'] ) {
 				$ctc['ga'] = 'yes';
 			}
+			// gtm
+			if ( isset( $othersettings['gtm'] ) ) {
+				$ctc['gtm'] = $othersettings['gtm'];
+			}
+
+			// g_an_gtm
+			if ( isset( $othersettings['g_an_gtm'] ) ) {
+				$ctc['g_an_gtm'] = $othersettings['g_an_gtm'];
+			}
 
 			// ads
 			if ( 'yes' === $ht_ctc_os['ga_ads'] ) {
@@ -516,6 +527,9 @@ if ( ! class_exists( 'HT_CTC_Chat' ) ) {
 			$g_an_event_name        = ( isset( $othersettings['g_an_event_name'] ) ) ? esc_attr( $othersettings['g_an_event_name'] ) : 'click to chat';
 			$ctc['g_an_event_name'] = $g_an_event_name;
 
+			$gtm_event_name        = ( isset( $othersettings['gtm_event_name'] ) ) ? esc_attr( $othersettings['gtm_event_name'] ) : 'click to chat';
+			$ctc['gtm_event_name'] = $gtm_event_name;
+
 			$pixel_event_type = ( isset( $othersettings['pixel_event_type'] ) ) ? esc_attr( $othersettings['pixel_event_type'] ) : 'trackCustom';
 			$pixel_event_name = 'Click to Chat by HoliThemes';
 			if ( 'trackCustom' === $pixel_event_type ) {
@@ -543,11 +557,13 @@ if ( ! class_exists( 'HT_CTC_Chat' ) ) {
 
 			$g_an_params  = ( isset( $othersettings['g_an_params'] ) && is_array( $othersettings['g_an_params'] ) ) ? array_map( 'esc_attr', $othersettings['g_an_params'] ) : '';
 			$pixel_params = ( isset( $othersettings['pixel_params'] ) && is_array( $othersettings['pixel_params'] ) ) ? array_map( 'esc_attr', $othersettings['pixel_params'] ) : '';
+			$gtm_params   = ( isset( $othersettings['gtm_params'] ) && is_array( $othersettings['gtm_params'] ) ) ? array_map( 'esc_attr', $othersettings['gtm_params'] ) : '';
 
 			$g_an_value = ( isset( $options['g_an'] ) ) ? esc_attr( $options['g_an'] ) : 'ga4';
 
 			$values = array(
 				'g_an_event_name'  => $g_an_event_name,
+				'gtm_event_name'   => $gtm_event_name,
 				'pixel_event_type' => $pixel_event_type,
 				'pixel_event_name' => $pixel_event_name,
 			);
@@ -650,6 +666,52 @@ if ( ! class_exists( 'HT_CTC_Chat' ) ) {
 						'key'   => 'URL',
 						'value' => '{url}',
 					);
+			}
+
+			// gtm params
+			if ( is_array( $gtm_params ) && isset( $gtm_params[0] ) ) {
+
+				foreach ( $gtm_params as $param ) {
+					$param_options = ( isset( $othersettings[ $param ] ) ) ? $othersettings[ $param ] : array();
+					$key           = ( isset( $param_options['key'] ) ) ? esc_attr( $param_options['key'] ) : '';
+					$value         = ( isset( $param_options['value'] ) ) ? esc_attr( $param_options['value'] ) : '';
+
+					if ( ! empty( $key ) && ! empty( $value ) ) {
+						$values['gtm_params'][] = $param;
+						$values[ $param ]       = array(
+							'key'   => $key,
+							'value' => $value,
+						);
+					}
+				}
+			} elseif ( ! isset( $othersettings['gtm_params'] ) && ! isset( $othersettings['parms_saved_2'] ) ) {
+				$values['gtm_params']  = array(
+					'gtm_param_1',
+					'gtm_param_2',
+					'gtm_param_3',
+					'gtm_param_4',
+					'gtm_param_5',
+				);
+				$values['gtm_param_1'] = array(
+					'key'   => 'type',
+					'value' => 'chat',
+				);
+				$values['gtm_param_2'] = array(
+					'key'   => 'number',
+					'value' => '{number}',
+				);
+				$values['gtm_param_3'] = array(
+					'key'   => 'title',
+					'value' => '{title}',
+				);
+				$values['gtm_param_4'] = array(
+					'key'   => 'url',
+					'value' => '{url}',
+				);
+				$values['gtm_param_5'] = array(
+					'key'   => 'ref',
+					'value' => 'dataLayer push',
+				);
 			}
 
 			$values = apply_filters( 'ht_ctc_fh_variables', $values );

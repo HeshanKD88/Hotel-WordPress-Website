@@ -1,3 +1,4 @@
+/* global tinyMCE */
 ( function htCtcGreetingsModule ( $ ) {
 	// ready
 	$( function handleGreetingsReady () {
@@ -74,7 +75,7 @@
 						$( ' .ctc_greetings_settings' )
 							.hide();
 					} else {
-					// $(" ." + greetings_template).show(100);
+						// $(" ." + greetings_template).show(100);
 
 						$( '.g_content_collapsible' )
 							.show();
@@ -82,7 +83,7 @@
 						// if not no - then first hide all and again display required fields..
 						if (
 							greetings_template === 'greetings-2' ||
-						greetings_template === 'greetings-1'
+							greetings_template === 'greetings-1'
 						) {
 							$( ' .ctc_greetings_settings' )
 								.hide();
@@ -221,6 +222,7 @@
 					.val() );
 
 				// If no header image is set, hide related elements
+				// todo: === test. can be any type..
 				if ( $( '.g_header_image' )
 					.val() === '' ) {
 					$( '.row_g_header_online_status' )

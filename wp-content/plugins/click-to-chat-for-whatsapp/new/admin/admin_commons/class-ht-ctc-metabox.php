@@ -205,7 +205,7 @@ if ( ! class_exists( 'HT_CTC_MetaBox' ) ) {
 
 			<?php if ( ! defined( 'HT_CTC_PRO_VERSION' ) ) { ?>
 				<p class="ht-ctc-meta-description">
-					<a href="https://holithemes.com/plugins/click-to-chat/custom-url/" target="_blank">Custom Link</a> (PRO)
+					<a href="https://holithemes.com/plugins/click-to-chat/docs/custom-url/" target="_blank">Custom Link</a> (PRO)
 				</p>
 			<?php } ?>
 

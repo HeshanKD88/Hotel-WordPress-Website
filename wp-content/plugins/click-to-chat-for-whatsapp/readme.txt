@@ -1,9 +1,9 @@
 === Click to Chat - HoliThemes ===
 Requires at least: 4.7
-Tested up to: 6.8.2
+Tested up to: 6.9
 Requires PHP: 5.6
 Contributors: HoliThemes
-Stable tag: 4.33
+Stable tag: 4.34
 Tags: whatsapp, whatsapp business, click to chat, whatsapp chat, WooCommerce WhatsApp
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -540,6 +540,12 @@ Thank you so much in advance from "Click to Chat" Team
 * Or enable Auto-updates to update automatically
 
 == Changelog ==
+
+= 4.34 =
+* Enchancement: Settings to send dataLayer object to Google Tag Manager.
+* Enchancement: Add Chat widget at shop page now works with page level call to action, pre-filled message.
+* Enchancement: Notification badge feature.
+* fix: Shortcodes not working with WooCommerce specific variables.
 
 = 4.33 =
 * Fix: Animations issues for call to action, Greetings dialog.

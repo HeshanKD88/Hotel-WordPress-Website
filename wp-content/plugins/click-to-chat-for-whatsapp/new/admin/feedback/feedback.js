@@ -1,5 +1,5 @@
 // immediate invoke function to avoid global scope pollution
-( function () {
+( function initFeedbackModal () {
 
 	const deactivateBtn = document.querySelector( '#deactivate-click-to-chat-for-whatsapp' );
 	const localVars = window.ht_ctc_admin_deactivate_feedback || {};
@@ -8,7 +8,7 @@
 
 	if ( is_mobile === 'yes' ) {
 		console.log( 'Mobile device detected - skipping feedback modal, ' +
-					'letting default deactivate link proceed.' );
+			'letting default deactivate link proceed.' );
 		return;
 	}
 
@@ -27,11 +27,11 @@
 	try {
 		if ( sessionStorage.getItem( 'ht_ctc_feedback_opened' ) === '1' ) {
 			console.log( 'Feedback modal already opened this session - skipping modal, ' +
-						'letting default deactivate link proceed.' );
+				'letting default deactivate link proceed.' );
 			return; // don't attach listeners → default WP behavior
 		}
-	} catch ( e ) {
-		console.warn( 'SessionStorage error - skipping modal as fallback.', e );
+	} catch ( error ) {
+		console.warn( 'SessionStorage error - skipping modal as fallback.', error );
 		return; // fail-safe: let default deactivate behavior continue
 	}
 
@@ -65,8 +65,8 @@
 		try {
 			// to make sure it opens only once per session - can comment this for testing
 			// sessionStorage.setItem('ht_ctc_feedback_opened', '1');
-		} catch ( e ) {
-			console.warn( 'Session storage error when setting modal flag:', e );
+		} catch ( error ) {
+			console.warn( 'Session storage error when setting modal flag:', error );
 		}
 	}
 
@@ -92,21 +92,21 @@
 	}
 
 	// Open modal on deactivate button click
-	deactivateBtn.addEventListener( 'click', function ( event ) {
+	deactivateBtn.addEventListener( 'click', function handleDeactivateClick ( event ) {
 		event.preventDefault();
 		openModal();
 	} );
 
 	// Close modal on close button click
 	if ( closeButton ) {
-		closeButton.addEventListener( 'click', function ( event ) {
+		closeButton.addEventListener( 'click', function handleCloseClick ( event ) {
 			event.preventDefault();
 			closeModal();
 		} );
 	}
 
 	// Close modal when clicking outside modal content
-	modal.addEventListener( 'click', function ( event ) {
+	modal.addEventListener( 'click', function handleOutsideClick ( event ) {
 		if ( ! modalContent.contains( event.target ) ) {
 			closeModal();
 		}
@@ -117,19 +117,21 @@
 	//     event.stopPropagation();
 	// });
 
+	// todo: add try catch..
 
 	// Skip & Deactivate button
 	const skipButton = document.querySelector( '.ht-ctc-df-skip' );
 	if ( skipButton ) {
-		skipButton.addEventListener( 'click', function ( event ) {
+		skipButton.addEventListener( 'click', function handleSkipClick ( event ) {
 			event.preventDefault();
+
 			window.location.href = deactivateUrl;
 		} );
 	}
 
 	// Feedback submission
 	if ( sendFeedbackButton ) {
-		sendFeedbackButton.addEventListener( 'click', function ( event ) {
+		sendFeedbackButton.addEventListener( 'click', function handleSendFeedback ( event ) {
 			try {
 				event.preventDefault();
 
@@ -144,6 +146,7 @@
 
 				if ( ! ajax_url || ! nonce ) {
 					console.log( 'Ajax URL or nonce is missing. Cannot send feedback.' );
+
 					window.location.href = deactivateUrl;
 					return;
 				}
@@ -175,12 +178,14 @@
 					} )
 					.finally( () => {
 						// This will always run, whether the request succeeded or failed
+
 						window.location.href = deactivateUrl; // or use window.open(deactivateUrl)
 					} );
-			} catch ( e ) {
-				console.error( 'catch: Error in feedback submission:', e );
+			} catch ( error ) {
+				console.error( 'catch: Error in feedback submission:', error );
 
 				// Fallback: redirect to deactivate URL
+
 				window.location.href = deactivateUrl;
 			}
 		} );

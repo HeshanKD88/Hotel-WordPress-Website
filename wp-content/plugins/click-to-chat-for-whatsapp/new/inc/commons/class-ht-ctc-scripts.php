@@ -90,13 +90,21 @@ if ( ! class_exists( 'HT_CTC_Scripts' ) ) {
 				$share_js = 'dev/share.dev.js';
 			}
 
+			// in v3.34 app.js is refactored. a lot of changed done. so added backward compatibility.
+			if ( defined( 'HT_CTC_PRO_VERSION' ) && version_compare( HT_CTC_PRO_VERSION, '2.16', '<' ) ) {
+				if ( defined( 'HT_CTC_DEBUG_MODE' ) ) {
+					$js = 'bc/3-33.app.dev.js';
+				} else {
+					$js = 'bc/app.js';
+				}
+			}
+
 			do_action( 'ht_ctc_ah_scripts_before' );
 
 			// enqueue main.css
 			wp_enqueue_style( 'ht_ctc_main_css', plugins_url( "new/inc/assets/css/$css", HT_CTC_PLUGIN_FILE ), '', HT_CTC_VERSION );
 
 			// app.js for all (chat)
-			// todo: add 'jquery' 
 			wp_enqueue_script( 'ht_ctc_app_js', plugins_url( "new/inc/assets/js/$js", HT_CTC_PLUGIN_FILE ), array( 'jquery' ), HT_CTC_VERSION, $load_app_js_bottom );
 
 			// woocommerce
@@ -106,7 +114,6 @@ if ( ! class_exists( 'HT_CTC_Scripts' ) ) {
 				$woo_options = get_option( 'ht_ctc_woo_options' );
 
 				if ( isset( $woo_options['woo_single_layout_cart_btn'] ) || isset( $woo_options['woo_shop_layout_cart_btn'] ) ) {
-					// todo: add 'jquery' 
 					wp_enqueue_script( 'ht_ctc_woo_js', plugins_url( "new/inc/assets/js/$woo_js", HT_CTC_PLUGIN_FILE ), array( 'jquery' ), HT_CTC_VERSION, $load_app_js_bottom );
 				}
 			}
@@ -134,6 +141,22 @@ if ( ! class_exists( 'HT_CTC_Scripts' ) ) {
 
 				wp_add_inline_style( 'ht_ctc_main_css', $custom_css );
 			}
+
+			// // todo: check this alternative method and try to implement later.
+			// if ( '' !== $custom_css ) {
+
+			// Remove HTML tags completely (CSS should never contain HTML)
+			// $custom_css = wp_strip_all_tags( $custom_css );
+
+			// Allow only characters that can occur in CSS
+			// (letters, digits, spaces, # . : ; { } () , - % etc.)
+			// $custom_css = preg_replace( '/[^A-Za-z0-9\s\#\.\:\;\,\-\%\{\}\(\)\/]/', '', $custom_css );
+
+			// Compress space
+			// $custom_css = preg_replace( '/\s+/', ' ', trim( $custom_css ) );
+
+			// wp_add_inline_style( 'ht_ctc_main_css', $custom_css );
+			// }
 
 			// group.js
 			if ( isset( $os['enable_group'] ) ) {

@@ -74,6 +74,13 @@ if ( ! class_exists( 'HT_CTC_Update_DB' ) ) {
 				if ( ! isset( $ht_ctc_plugin_details['v3_31'] ) ) {
 					$this->v3_31_update();
 				}
+
+				/**
+				 * V4.34: if not yet updated to v4.34 or above
+				 */
+				if ( ! isset( $ht_ctc_plugin_details['v4_34'] ) ) {
+					$this->v4_34_update();
+				}
 			}
 		}
 
@@ -85,6 +92,35 @@ if ( ! class_exists( 'HT_CTC_Update_DB' ) ) {
 
 
 
+		/**
+		 * Updating to v4.34 or above
+		 *
+		 * 4.34 changes. setting form GTM datalayer push. so by default enabled. (as like early app js how datalayer pused. now with settings.)
+		 * and in 4.30 we added google anayalytics data to send to gtm datalayer form app js but now as deprecated. so added ga_gtm as enabled.
+		 *
+		 *
+		 * todo: add details..
+		 */
+		public function v4_34_update() {
+
+			$os = get_option( 'ht_ctc_othersettings' );
+
+			$new_data = array(); // hold new structure data
+
+			$new_data['ga_gtm']         = '1';
+			$new_data['gtm']            = '1';
+			$new_data['gtm_event_name'] = 'Click to Chat';
+
+			if ( ! is_array( $new_data ) ) {
+				$new_data = array();
+			}
+			if ( ! is_array( $os ) ) {
+				$os = array();
+			}
+
+			$os = array_merge( $new_data, $os );
+			update_option( 'ht_ctc_othersettings', $os );
+		}
 
 
 

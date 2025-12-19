@@ -454,6 +454,9 @@ if ( ! class_exists( 'HT_CTC_Admin_Woo_Page' ) ) {
 							<p><?php esc_html_e( 'Select Style', 'click-to-chat-for-whatsapp' ); ?></p>
 						</div>
 						<div class="input-field col s6">
+							<?php
+							// the output: string.. where using ===. '1', '2', '3', '3_1', '4', '5', '7', '7_1', '8', '99'
+							?>
 							<select name="<?php echo esc_attr( $dbrow ); ?>[woo_shop_style]" class="woo_shop_style">
 									<option value="1" <?php echo ( '1' === $woo_shop_style ) ? 'SELECTED' : ''; ?> ><?php esc_html_e( 'Style-1', 'click-to-chat-for-whatsapp' ); ?></option>
 									<option value="2" <?php echo ( '2' === $woo_shop_style ) ? 'SELECTED' : ''; ?> ><?php esc_html_e( 'Style-2', 'click-to-chat-for-whatsapp' ); ?></option>

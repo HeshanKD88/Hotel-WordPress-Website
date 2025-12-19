@@ -153,6 +153,10 @@ if ( ! class_exists( 'HT_CTC_Admin_Other_Settings' ) ) {
 			 */
 			?>
 		<input name="<?php echo esc_attr( $dbrow ); ?>[parms_saved]" value="after_3_31" type="hidden" class="hide">
+		<input name="<?php echo esc_attr( $dbrow ); ?>[parms_saved_2]" value="after_4_34" type="hidden" class="hide">
+		
+		
+		
 			<?php
 
 			// Google Analytics
@@ -160,6 +164,9 @@ if ( ! class_exists( 'HT_CTC_Admin_Other_Settings' ) ) {
 
 			$google_analytics_checkbox = ( isset( $options['g_an'] ) ) ? 1 : '';
 			// $google_analytics_checkbox = ( isset( $options['g_an']) ) ? esc_attr( $options['g_an'] ) : '';
+
+			$g_an_gtm_value                = ( isset( $options['g_an_gtm'] ) ) ? esc_attr( $options['g_an_gtm'] ) : '1';
+			$google_analytics_gtm_checkbox = ( isset( $options['g_an_gtm'] ) ) ? 1 : '';
 
 			?>
 		<ul class="collapsible col_google_analytics coll_active" data-coll_active="col_google_analytics" id="col_google_analytics">
@@ -372,13 +379,169 @@ if ( ! class_exists( 'HT_CTC_Admin_Other_Settings' ) ) {
 			
 		</div>
 
-		<p class="description"><?php esc_html_e( 'Create Event from Google Tag manager (GTM)', 'click-to-chat-for-whatsapp' ); ?> - <a target="_blank" href="https://holithemes.com/plugins/click-to-chat/create-event-from-google-tag-manager-using-datalayer-send-to-google-analytics/"><?php esc_html_e( 'dataLayer', 'click-to-chat-for-whatsapp' ); ?></a> </p>
-		<br>
+
 
 		</div>
 		</li>
 		</ul>
 		
+			<?php
+			// Google Tag Manager
+			$gtm_value                   = ( isset( $options['gtm'] ) ) ? esc_attr( $options['gtm'] ) : 'gtm';
+			$google_tag_manager_checkbox = ( isset( $options['gtm'] ) ) ? 1 : '';
+			?>
+		<ul class="collapsible col_google_tag_manager coll_active" data-coll_active="col_google_tag_manager" id="col_google_tag_manager">
+		<li class="">
+		<div class="collapsible-header">
+			<span><?php esc_html_e( 'Google Tag Manager', 'click-to-chat-for-whatsapp' ); ?></span>
+			<span class="right_icon dashicons dashicons-arrow-down-alt2"></span>
+		</div>
+		<div class="collapsible-body">
+		<p>
+		<p class="description"><?php esc_html_e( 'Pushes a dataLayer event for GTM triggers.', 'click-to-chat-for-whatsapp' ); ?></p>
+			<br>
+			<label class="ctc_checkbox_label">
+				<input name="<?php echo esc_attr( $dbrow ); ?>[gtm]" type="checkbox" value="<?php echo esc_attr( $gtm_value ); ?>" <?php checked( $google_tag_manager_checkbox, 1 ); ?> id="google_tag_manager" />
+				<span><?php esc_html_e( 'Google Tag Manager', 'click-to-chat-for-whatsapp' ); ?></span>
+			</label>
+		</p>
+			<?php
+			// parms_saved_2 not exits. (and user not yet saved/clear the params.) backward compatible.
+			if ( ! isset( $options['gtm_params'] ) && ! isset( $options['parms_saved_2'] ) ) {
+				$options['gtm_params'] = array(
+					'gtm_param_1',
+					'gtm_param_2',
+					'gtm_param_3',
+					'gtm_param_4',
+					'gtm_param_5',
+				);
+
+				$options['gtm_param_1'] = array(
+					'key'   => 'type',
+					'value' => 'chat',
+				);
+
+				$options['gtm_param_2'] = array(
+					'key'   => 'number',
+					'value' => '{number}',
+				);
+
+				$options['gtm_param_3'] = array(
+					'key'   => 'title',
+					'value' => '{title}',
+				);
+
+				$options['gtm_param_4'] = array(
+					'key'   => 'url',
+					'value' => '{url}',
+				);
+
+				$options['gtm_param_5'] = array(
+					'key'   => 'ref',
+					'value' => 'dataLayer push',
+				);
+
+			}
+
+			$gtm_event_name  = ( isset( $options['gtm_event_name'] ) ) ? esc_attr( $options['gtm_event_name'] ) : 'Click to Chat';
+			$gtm_params      = ( isset( $options['gtm_params'] ) && is_array( $options['gtm_params'] ) ) ? array_map( 'esc_attr', $options['gtm_params'] ) : '';
+			$gtm_param_order = ( isset( $options['gtm_param_order'] ) ) ? esc_attr( $options['gtm_param_order'] ) : 10;
+			$key_gen         = 1;
+			?>
+
+		<div class="row ctc_gtm_values">
+			<div style="display:flex; justify-content:center; gap:5px;">
+				<div class="input-field">
+					<p class="description"><?php esc_html_e( 'Event Name', 'click-to-chat-for-whatsapp' ); ?></p>
+					<input style="visibility:hidden;" type="text" class="input-margin">
+				</div>
+				<div class="input-field" style="">
+					<input name="<?php echo esc_attr( $dbrow ); ?>[gtm_event_name]" value="<?php echo esc_attr( $gtm_event_name ); ?>" placeholder="click to chat" id="gtm_event_name" type="text" class="input-margin">
+					<label for="gtm_event_name"><?php esc_html_e( 'Event Name', 'click-to-chat-for-whatsapp' ); ?></label>
+				</div>
+				<div class="input-field">
+					<span style="visibility:hidden;" class="dashicons dashicons-no-alt" title="Remove Parameter"></span>
+				</div>
+			</div>
+			
+			<div class="ctc_an_params ctc_gtm_params ctc_sortable">
+				<?php
+				$num = '';
+				if ( is_array( $gtm_params ) && isset( $gtm_params[0] ) ) {
+					foreach ( $gtm_params as $param ) {
+						$param_options = ( isset( $options[ $param ] ) && is_array( $options[ $param ] ) ) ? map_deep( $options[ $param ], 'esc_attr' ) : '';
+						$key           = ( isset( $param_options['key'] ) ) ? esc_attr( $param_options['key'] ) : '';
+						$value         = ( isset( $param_options['value'] ) ) ? esc_attr( $param_options['value'] ) : '';
+						if ( ! empty( $key ) && ! empty( $value ) ) {
+							?>
+							<div class="ctc_an_param gtm_param row" style="margin-bottom:5px; display:flex; gap:5px; justify-content:center;">
+								<input style="display: none;" name="ht_ctc_othersettings[gtm_params][]" type="text" class="gtm_param_order_ref_number" value="<?php echo esc_attr( $param ); ?>">
+								<div class="input-field">
+									<input name="ht_ctc_othersettings[<?php echo esc_attr( $param ); ?>][key]" value="<?php echo esc_attr( $key ); ?>" id="<?php echo esc_attr( $param . '_key' ); ?>" type="text" class="ht_ctc_gtm_param_key input-margin">
+									<label for="<?php echo esc_attr( $param . '_key' ); ?>"><?php esc_html_e( 'Event Parameter', 'click-to-chat-for-whatsapp' ); ?></label>
+								</div>
+								<div class="input-field">
+									<input name="ht_ctc_othersettings[<?php echo esc_attr( $param ); ?>][value]" value="<?php echo esc_attr( $value ); ?>" id="<?php echo esc_attr( $param ); ?>" type="text" class="ht_ctc_gtm_param_value input-margin">
+									<label for="<?php echo esc_attr( $param ); ?>"><?php esc_html_e( 'Value', 'click-to-chat-for-whatsapp' ); ?></label>
+								</div>
+								<div class="input-field">
+									<span style="color:#ddd; margin-left:auto; cursor:pointer;" class="an_param_remove dashicons dashicons-no-alt" title="Remove Parameter"></span>
+								</div>
+							</div>
+							<?php
+						}
+						++$key_gen;
+					}
+				}
+				?>
+				<div class="ctc_new_gtm_param">
+				</div>
+				<div style="text-align:center;">
+					<div class="ctc_add_gtm_param_button" style="display:inline-flex; margin: 10px 0px; cursor:pointer; font-size:16px; font-weight:500; padding: 8px; justify-content:center;">
+						<span style="color: #039be5;" class="dashicons dashicons-plus-alt2" ></span>
+						<span style="color: #039be5;">Add Parameter</span>
+					</div>
+				</div>
+				<div class="ctc_gtm_param_snippets" style="display: none;">
+					<input type="text" name="ht_ctc_othersettings[gtm_param_order]" class="gtm_param_order" value="<?php echo esc_attr( $gtm_param_order ); ?>">
+					<div class="ctc_an_param gtm_param ht_ctc_gtm_add_param">
+						<div class="row" style="display:flex; gap:5px; justify-content:center;">
+							<input style="display: none;" type="text" class="gtm_param_order_ref_number" value="<?php echo esc_attr( $gtm_param_order ); ?>">
+							<div class="input-field">
+								<input type="text" placeholder="click" class="ht_ctc_gtm_add_param_key input-margin">
+								<label><?php esc_html_e( 'Event Parameter', 'click-to-chat-for-whatsapp' ); ?></label>
+							</div>
+							<div class="input-field">
+								<input type="text" placeholder="chat" class="ht_ctc_gtm_add_param_value input-margin">
+								<label><?php esc_html_e( 'Value', 'click-to-chat-for-whatsapp' ); ?></label>
+							</div>
+							<div class="input-field">
+								<span style="color:#ddd; margin-left:auto; cursor:pointer;" class="an_param_remove dashicons dashicons-no-alt" title="Remove Parameter"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<p class="description"><?php esc_html_e( 'Create Event from Google Tag manager (GTM)', 'click-to-chat-for-whatsapp' ); ?> - <a target="_blank" href="https://holithemes.com/plugins/click-to-chat/create-event-from-google-tag-manager-using-datalayer-send-to-google-analytics/"><?php esc_html_e( 'dataLayer', 'click-to-chat-for-whatsapp' ); ?></a> </p>
+
+		
+		<details class="ctc_details" style="margin:15px 10px;">
+			<summary style="font-size:12px;"><strong>Deprecated — Use the GTM Settings above instead</strong></summary>
+			<div style="margin:8px 10px 0px 10px;">
+				<label class="ctc_checkbox_label" style="font-size:11px;">
+					<input name="<?php echo esc_attr( $dbrow ); ?>[g_an_gtm]" type="checkbox" value="<?php echo esc_attr( $g_an_gtm_value ); ?>" <?php checked( $google_analytics_gtm_checkbox, 1 ); ?> id="google_analytics_gtm" />
+					<span>Push datalayer object to GTM using above Google Analyatics event name, parameters.</span>
+				</label>
+				<p style="margin:8px 0 0; color:#d00; font-weight:600; font-size:11px;">This feature is deprecated. Please use the GTM settings in this section.</p>
+			</div>
+		</details>
+		
+		<br>
+		</div>
+		</li>
+		</ul>
 
 
 			<?php
@@ -737,7 +900,7 @@ if ( ! class_exists( 'HT_CTC_Admin_Other_Settings' ) ) {
 		<div class="collapsible-body">
 		
 		<p class="description" style="margin-bottom: 40px;"><?php esc_html_e( 'Integrate, Automation', 'click-to-chat-for-whatsapp' ); ?> <?php esc_html_e( 'using', 'click-to-chat-for-whatsapp' ); ?> <a target="_blank" href="https://holithemes.com/plugins/click-to-chat/webhooks/"><?php esc_html_e( 'Webhooks', 'click-to-chat-for-whatsapp' ); ?></a></p>
-		<p class="description" style="margin-top:10px;">To get the greetings form data, use the <a href="https://holithemes.com/plugins/click-to-chat/greetings-form#webhooks" target="_blank">Greetings Form webhook</a> feature.</p>
+		<p class="description" style="margin-top:10px;">To get the greetings form data, use the <a href="https://holithemes.com/plugins/click-to-chat/docs/greetings-form#webhooks" target="_blank">Greetings Form webhook</a> feature.</p>
 
 		<!-- Webhook URL -->
 		<div class="row">

@@ -3,6 +3,7 @@
 ( function htCtcGroupModule ( $ ) {
 	// ready
 	$( function handleGroupReady () {
+
 		var url = window.location.href;
 		var is_mobile = typeof screen.width !== 'undefined' && screen.width > 1024 ? 'no' : 'yes';
 		var post_title = typeof document.title !== 'undefined' ? document.title : '';
@@ -27,7 +28,7 @@
 			// shortcode - click
 			$( document )
 				.on( 'click', '.ht-ctc-sc-group', function handleGroupShortcodeClick () {
-					data_link = this.getAttribute( 'data-ctc-link' );
+					var data_link = this.getAttribute( 'data-ctc-link' );
 					data_link = encodeURI( data_link );
 					window.open( data_link, '_blank', 'noopener' );
 
@@ -37,10 +38,10 @@
 		group_ht_ctc();
 
 		// Hide based on device
-		function group_display ( p ) {
-			const cssStyles = p.getAttribute( 'data-css' );
+		function group_display ( element ) {
+			const cssStyles = element.getAttribute( 'data-css' );
 			if ( is_mobile === 'yes' ) {
-				var display_mobile = p.getAttribute( 'data-display_mobile' );
+				var display_mobile = element.getAttribute( 'data-display_mobile' );
 				if ( 'show' === display_mobile ) {
 					// remove desktop style
 					var removeDesktopGroup = document.querySelector( '.ht_ctc_desktop_group' );
@@ -48,12 +49,12 @@
 						removeDesktopGroup.remove();
 					}
 
-					var position_mobile = p.getAttribute( 'data-position_mobile' );
-					p.style.cssText = position_mobile + cssStyles;
-					display( p );
+					var position_mobile = element.getAttribute( 'data-position_mobile' );
+					element.style.cssText = position_mobile + cssStyles;
+					display( element );
 				}
 			} else {
-				var display_desktop = p.getAttribute( 'data-display_desktop' );
+				var display_desktop = element.getAttribute( 'data-display_desktop' );
 				if ( 'show' === display_desktop ) {
 					// remove mobile style
 					var removeMobileGroup = document.querySelector( '.ht_ctc_mobile_group' );
@@ -61,9 +62,9 @@
 						removeMobileGroup.remove();
 					}
 
-					var position = p.getAttribute( 'data-position' );
-					p.style.cssText = position + cssStyles;
-					display( p );
+					var position = element.getAttribute( 'data-position' );
+					element.style.cssText = position + cssStyles;
+					display( element );
 				}
 			}
 		}
@@ -73,26 +74,29 @@
 		 * animations
 		 * cta hover effects
 		 */
-		function display ( p ) {
+		function display ( element ) {
 			// p.style.display = "block";
 			try {
-				var dt = parseInt( p.getAttribute( 'data-show_effect' ) );
-				$( p )
+				// var dt = parseInt( element.getAttribute( 'data-show_effect' ), 10 );
+				// NaN this can works perfect with jQuery show function to display css animations
+				var dt = parseInt( element.getAttribute( 'data-show_effect' ) );
+
+				$( element )
 					.show( dt );
-			} catch ( e ) {
-				console.warn( 'Group display fallback triggered', e );
-				p.style.display = 'block';
+			} catch ( error ) {
+				console.warn( 'Group display fallback triggered', error );
+				element.style.display = 'block';
 			}
 
 			// animations
-			var animateclass = p.getAttribute( 'data-an_type' );
-			var an_time = $( p )
+			var animateclass = element.getAttribute( 'data-an_type' );
+			var an_time = $( element )
 				.hasClass( 'ht_ctc_entry_animation' ) ?
 				1200 :
 				120;
 
 			setTimeout( function runGroupAnimation () {
-				p.classList.add( 'ht_ctc_animation', animateclass );
+				element.classList.add( 'ht_ctc_animation', animateclass );
 			}, an_time );
 
 			// cta hover effects

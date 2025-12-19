@@ -1,13 +1,15 @@
+
+/* global M */
 // Click to Chat - prev
 jQuery( document )
-	.ready( function ( $ ) {
-	// wpColorPicker
+	.ready( function onDocReady ( $ ) {
+		// wpColorPicker
 		$( '.color-wp' )
 			.wpColorPicker();
 	} );
 
 // initialize materialize function ..
-document.addEventListener( 'DOMContentLoaded', function () {
+document.addEventListener( 'DOMContentLoaded', function onDomContentLoaded () {
 	var elems = document.querySelectorAll( 'select' );
 	M.FormSelect.init( elems, {} );
 	var collapsibleElems = document.querySelectorAll( '.collapsible' );
@@ -15,7 +17,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 } );
 
 jQuery( document )
-	.ready( function () {
+	.ready( function onDocReadyAttr () {
 		const position = document.querySelectorAll( '.position' );
 
 		const default_display = () => {
@@ -41,14 +43,14 @@ jQuery( document )
 
 		//  incase display-block is added remove it ..
 		const remove = () => {
-			position.forEach( ( e ) => {
-				e.classList.remove( 'display-block' );
+			position.forEach( ( element ) => {
+				element.classList.remove( 'display-block' );
 			} );
 		};
 
 		jQuery( '.select' )
-			.on( 'change', function ( e ) {
-				const val = e.target.value;
+			.on( 'change', function onSelectChange ( event ) {
+				const val = event.target.value;
 				const position1 = document.querySelector( '.position-1' );
 				const position2 = document.querySelector( '.position-2' );
 				const position3 = document.querySelector( '.position-3' );

@@ -1,3 +1,4 @@
+
 /**
  * Click to Chat - WooCommerce Integration
  *
@@ -30,8 +31,8 @@
 				console.log( 'Displaying .ctc_woo_place' );
 				displayCtcWooPlace();
 			}
-		} catch ( e ) {
-			console.error( 'Error initializing cart layout:', e );
+		} catch ( error ) {
+			console.error( 'Error initializing cart layout:', error );
 		}
 
 		/**

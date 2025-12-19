@@ -3,6 +3,7 @@
 document.addEventListener( 'DOMContentLoaded', function initializeMaterializeComponents () {
 	// md
 	try {
+		// todo: fix if M is undefined
 		const selectElements = document.querySelectorAll( 'select' );
 		M.FormSelect.init( selectElements, {} );
 		const collapsibleElements = document.querySelectorAll( '.collapsible' );
@@ -145,6 +146,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 					if ( ! href.startsWith( '#' ) ) {
 						return;
 					}
+
 					window.location.hash = href;
 					ctc_setItem( 'woo_tab', href );
 				} );
@@ -390,7 +392,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 			// on click select style item
 			$( '.select_style_item' )
 				.on( 'click', function handleDesktopStyleSelection ( event ) {
-				// select effects
+					// select effects
 					$( '.select_style_item' )
 						.removeClass( 'select_style_selected' );
 					$( this )
@@ -421,7 +423,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 			// on click select style item
 			$( '.m_select_style_item' )
 				.on( 'click', function handleMobileStyleSelection ( event ) {
-				// select effects
+					// select effects
 					$( '.m_select_style_item' )
 						.removeClass( 'select_style_selected' );
 					$( this )
@@ -482,6 +484,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 			// if m fullwidth is checked then show m_fullwidth_description else hide
 			$( '.cs_m_fullwidth input' )
 				.on( 'change', function handleFullWidthToggle ( event ) {
+					event.preventDefault();
 					var descripton = $( this )
 						.closest( '.cs_m_fullwidth' )
 						.find( '.m_fullwidth_description' );
@@ -615,27 +618,23 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 		}
 
 		function notificationBadge () {
+			var $notificationBadge = $( '#notification_badge' );
+			var $notificationSettings = $( '.notification_settings ' );
+
 			// same setting
-			if ( $( '#notification_badge' )
-				.is( ':checked' ) ) {
-				$( '.notification_settings ' )
-					.show();
+			if ( $notificationBadge.is( ':checked' ) ) {
+				$notificationSettings.show();
 			} else {
-				$( '.notification_settings ' )
-					.hide();
+				$notificationSettings.hide();
 			}
 
-			$( '#notification_badge' )
-				.on( 'change', function handleNotificationBadgeChange ( event ) {
-					if ( $( '#notification_badge' )
-						.is( ':checked' ) ) {
-						$( '.notification_settings ' )
-							.show( 400 );
-					} else {
-						$( '.notification_settings ' )
-							.hide( 400 );
-					}
-				} );
+			$notificationBadge.on( 'change', function handleNotificationBadgeChange ( event ) {
+				if ( $notificationBadge.is( ':checked' ) ) {
+					$notificationSettings.show( 400 );
+				} else {
+					$notificationSettings.hide( 400 );
+				}
+			} );
 		}
 
 		// WhatsApp number
@@ -760,6 +759,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 					.find( ':selected' )
 					.val();
 
+				// todo: test
 				if ( shopStyleValue === '1' || shopStyleValue === '8' ) {
 					shopShowCartLayout();
 				}
@@ -875,23 +875,20 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 				.attr( 'title', text );
 
 			// s3e - shadow on hover
-			if ( ! $( '#s3_box_shadow' )
-				.is( ':checked' ) ) {
-				$( '.s3_box_shadow_hover' )
-					.show();
+			var $s3BoxShadow = $( '#s3_box_shadow' );
+			var $s3BoxShadowHover = $( '.s3_box_shadow_hover' );
+
+			if ( ! $s3BoxShadow.is( ':checked' ) ) {
+				$s3BoxShadowHover.show();
 			}
 
-			$( '#s3_box_shadow' )
-				.on( 'change', function handleS3BoxShadowChange ( event ) {
-					if ( $( '#s3_box_shadow' )
-						.is( ':checked' ) ) {
-						$( '.s3_box_shadow_hover' )
-							.hide( 400 );
-					} else {
-						$( '.s3_box_shadow_hover' )
-							.show( 500 );
-					}
-				} );
+			$s3BoxShadow.on( 'change', function handleS3BoxShadowChange ( event ) {
+				if ( $s3BoxShadow.is( ':checked' ) ) {
+					$s3BoxShadowHover.hide( 400 );
+				} else {
+					$s3BoxShadowHover.show( 500 );
+				}
+			} );
 		}
 
 		// collapsible..
@@ -929,9 +926,9 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 				'ht_ctc_custom_css',
 			];
 
-			// dynamically add to collapsible_list
-			if ( document.querySelector( '.coll_active' ) ) {
-				$( '.coll_active' )
+			var $collActive = $( '.coll_active' );
+			if ( $collActive.length ) {
+				$collActive
 					.each( function recordActiveCollapsible () {
 						collapsible_list.push( $( this )
 							.attr( 'data-coll_active' ) );
@@ -990,15 +987,16 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 		function intl_input ( className ) {
 			console.log( 'intl_input() className: ' + className );
 
-			if ( document.querySelector( '.' + className ) ) {
+			var $inputs = $( '.' + className );
+			if ( $inputs.length ) {
 				console.log( className + ' class name exists' );
 
 				if ( typeof intlTelInput !== 'undefined' ) {
-					$( '.' + className )
-						.each( function initializeIntlInputInstance () {
-							console.log( 'each: calling intl_init()..' + this );
-							intl_init( this );
-						} );
+
+					$inputs.each( function initializeIntlInputInstance () {
+						console.log( 'each: calling intl_init()..' + this );
+						intl_init( this );
+					} );
 
 					console.log( 'calling intl_onchange() from intl_input()' );
 					intl_onchange();
@@ -1047,7 +1045,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 				// fall back..
 				country_code = 'us';
 
-				// todo: test if this way of changed the ocde works fine...
+				// todo: test if this way of changed the code works fine...
 				$.ajax( {
 					url: 'https://ipinfo.io',
 					dataType: 'jsonp',
@@ -1115,7 +1113,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 
 			$( '.intl_number' )
 				.on( 'input countrychange', function handleIntlInputChange ( event ) {
-				// if blank also it may triggers.. as if countrycode changes.
+					// if blank also it may triggers.. as if countrycode changes.
 					console.log( 'on change - intl_number - input, countrychange' );
 					console.log( this );
 					console.log( intlTelInput );
@@ -1140,7 +1138,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 					}
 
 					if ( changed.isValidNumber() ) {
-					// to display in format
+						// to display in format
 						console.log( 'valid number: ' + changed.getNumber() );
 
 						// issue here.. setNumber ~ uses for for formating..
@@ -1153,7 +1151,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 						// @used at admin demo
 						document.dispatchEvent( new CustomEvent(
 							'ht_ctc_admin_event_valid_number',
-							{ detail: { d: numberDetails } },
+							{ detail: { data: numberDetails } },
 						) );
 					} else {
 						console.log( 'invalid number: ' + changed.getNumber() );
@@ -1191,7 +1189,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 
 			if ( ! pre_countries.includes( country_code ) ) {
 				console.log( country_code +
-							' not included. so pushing country code to pre countries' );
+					' not included. so pushing country code to pre countries' );
 
 				// push to index 0..
 				pre_countries.unshift( country_code );
@@ -1270,13 +1268,13 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 						.val( 'g_an_param_' + gAnParamOrder );
 
 					var analyticsParamKey =
-							'ht_ctc_othersettings[g_an_param_' +
-							gAnParamOrder +
-							'][key]';
+						'ht_ctc_othersettings[g_an_param_' +
+						gAnParamOrder +
+						'][key]';
 					var analyticsParamValue =
-							'ht_ctc_othersettings[g_an_param_' +
-							gAnParamOrder +
-							'][value]';
+						'ht_ctc_othersettings[g_an_param_' +
+						gAnParamOrder +
+						'][value]';
 					$( gAnParamClone )
 						.find( '.ht_ctc_g_an_add_param_key' )
 						.attr( 'name', analyticsParamKey );
@@ -1292,6 +1290,77 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 					gAnParamOrder++;
 					$( '.g_an_param_order' )
 						.val( gAnParamOrder );
+				} );
+
+			// Google Tag Manager
+			// if #google_tag_manager is checked then display .ctc_gtm_values
+			if ( $( '#google_tag_manager' )
+				.is( ':checked' ) ) {
+				$( '.ctc_gtm_values' )
+					.show();
+			}
+
+			// event name, params - display only if gtm is enabled.
+			$( '#google_tag_manager' )
+				.on( 'change', function handleGoogleTagManagerToggle ( event ) {
+					if ( $( '#google_tag_manager' )
+						.is( ':checked' ) ) {
+						$( '.ctc_gtm_values' )
+							.show( 400 );
+					} else {
+						$( '.ctc_gtm_values' )
+							.hide( 200 );
+					}
+				} );
+
+			var gtmParamSnippet = $( '.ctc_gtm_param_snippets .ht_ctc_gtm_add_param' );
+			console.log( gtmParamSnippet );
+
+			// add value
+			$( document )
+				.on( 'click', '.ctc_add_gtm_param_button', function handleAddGtmParamClick () {
+					console.log( 'on click: add gtm param button' );
+					console.log( gtmParamSnippet );
+
+					var gtmParamOrder = $( '.gtm_param_order' )
+						.val();
+					gtmParamOrder = parseInt( gtmParamOrder, 10 );
+
+					var gtmParamClone = gtmParamSnippet.clone();
+					console.log( gtmParamClone );
+					console.log( 'gtmParamOrder', gtmParamOrder );
+
+					// filed number for reference
+					$( gtmParamClone )
+						.find( '.gtm_param_order_ref_number' )
+						.attr( 'name', 'ht_ctc_othersettings[gtm_params][]' );
+					$( gtmParamClone )
+						.find( '.gtm_param_order_ref_number' )
+						.val( 'gtm_param_' + gtmParamOrder );
+
+					var gtmParamKey =
+						'ht_ctc_othersettings[gtm_param_' +
+						gtmParamOrder +
+						'][key]';
+					var gtmParamValue =
+						'ht_ctc_othersettings[gtm_param_' +
+						gtmParamOrder +
+						'][value]';
+					$( gtmParamClone )
+						.find( '.ht_ctc_gtm_add_param_key' )
+						.attr( 'name', gtmParamKey );
+					$( gtmParamClone )
+						.find( '.ht_ctc_gtm_add_param_value' )
+						.attr( 'name', gtmParamValue );
+
+					console.log( $( '.ctc_new_gtm_param' ) );
+
+					$( '.ctc_new_gtm_param' )
+						.append( gtmParamClone );
+
+					gtmParamOrder++;
+					$( '.gtm_param_order' )
+						.val( gtmParamOrder );
 				} );
 
 			// fb pixel
@@ -1371,13 +1440,13 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 						.val( 'pixel_param_' + pixelParamOrder );
 
 					var pixelParamKey =
-								'ht_ctc_othersettings[pixel_param_' +
-								pixelParamOrder +
-								'][key]';
+						'ht_ctc_othersettings[pixel_param_' +
+						pixelParamOrder +
+						'][key]';
 					var pixelParamValue =
-								'ht_ctc_othersettings[pixel_param_' +
-								pixelParamOrder +
-								'][value]';
+						'ht_ctc_othersettings[pixel_param_' +
+						pixelParamOrder +
+						'][value]';
 					$( pixelParamClone )
 						.find( '.ht_ctc_pixel_add_param_key' )
 						.attr( 'name', pixelParamKey );
@@ -1398,8 +1467,8 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 			// Remove params
 			$( '.ctc_an_params' )
 				.on( 'click', '.an_param_remove', function handleAnalyticsParamRemove ( event ) {
-					console.log( 'on click: an_param_remove' );
 					event.preventDefault();
+					console.log( 'on click: an_param_remove' );
 					$( this )
 						.closest( '.ctc_an_param' )
 						.remove();
@@ -1408,7 +1477,7 @@ document.addEventListener( 'DOMContentLoaded', function initializeMaterializeCom
 			// analytics count
 			$( '.analytics_count_message' )
 				.on( 'click', function toggleAnalyticsCountMessage ( event ) {
-				// $(".analytics_count_message span").hide();
+					// $(".analytics_count_message span").hide();
 					$( '.analytics_count_select' )
 						.toggle( 200 );
 				} );

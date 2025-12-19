@@ -247,11 +247,11 @@ if ( ! class_exists( 'HT_CTC_Admin_Greetings_Page' ) ) {
 						),
 						array(
 							'template'    => 'element_details_end',
-							'description' => "<a href='https://holithemes.com/plugins/click-to-chat/greetings-1/' target='_blank'>Greetings-1</a>",
+							'description' => "<a href='https://holithemes.com/plugins/click-to-chat/docs/greetings-1/' target='_blank'>Greetings-1</a>",
 						),
 						array(
 							'template'    => 'collapsible_end',
-							'description' => "<a href='https://holithemes.com/plugins/click-to-chat/greetings-1/' target='_blank'>Greetings-1</a>",
+							'description' => "<a href='https://holithemes.com/plugins/click-to-chat/docs/greetings-1/' target='_blank'>Greetings-1</a>",
 						),
 					),
 				),
@@ -282,7 +282,7 @@ if ( ! class_exists( 'HT_CTC_Admin_Greetings_Page' ) ) {
 						),
 						array(
 							'template'    => 'collapsible_end',
-							'description' => "<a href='https://holithemes.com/plugins/click-to-chat/greetings-2/' target='_blank'>Greetings-2</a> <br> Customize 'Call to Action' button from 'Click to Chat' -> Customize - Style-1 ",
+							'description' => "<a href='https://holithemes.com/plugins/click-to-chat/docs/greetings-2/' target='_blank'>Greetings-2</a> <br> Customize 'Call to Action' button from 'Click to Chat' -> Customize - Style-1 ",
 						),
 					),
 				),

@@ -5,6 +5,8 @@
  *
  */
 
+/* global ht_ctc_admin_demo_var, tinyMCE */
+
 ( function htCtcAdminDemoModule ( $ ) {
 	// ready
 	$( function handleAdminDemoReady () {
@@ -60,6 +62,7 @@
 			// ctc_demo_messages
 			$( '.ctc_demo_messages' )
 				.hide()
+
 				.fadeIn( 500 );
 
 			demo_notice_timeoutId = setTimeout( () => {
@@ -237,7 +240,7 @@
 				// on change - style..
 				$( '.select_style_item' )
 					.on( 'click', function handleCallback () {
-					// styles
+						// styles
 						demo_style = $( '.select_style_desktop' )
 							.val();
 
@@ -250,7 +253,7 @@
 				// on change - mobile style..
 				$( '.m_select_style_item' )
 					.on( 'click', function handleCallback () {
-					// console.log('change');
+						// console.log('change');
 
 						// styles
 						demo_style = $( '.select_style_mobile' )
@@ -270,7 +273,7 @@
 				// on change, input (some filed to update on change only and some on input, ..)
 				$( '.ctc_ad_main_page_on_change_input' )
 					.on( 'change input paste', function handleCallback () {
-					// console.log('input change');
+						// console.log('input change');
 						main_page_update();
 					} );
 
@@ -418,6 +421,15 @@
 						bottom_top_value = bottom_top_value + 'px';
 					}
 					console.log( bottom_top_value );
+
+					// // Sanitize values
+					// var validCssRegex = /^(-?\d*\.?\d+)(px|%|em|rem|vh|vw|vmin|vmax|cm|mm|in|pt|pc|ex|ch)?$|^auto$|^inherit$|^initial$|^unset$/i;
+					// if ( ! validCssRegex.test( bottom_top_value ) ) {
+					// 	bottom_top_value = '0px';
+					// }
+					// if ( ! validCssRegex.test( left_right_value ) ) {
+					// 	left_right_value = '0px';
+					// }
 
 					var position_css = {
 						[ top_bottom ]: bottom_top_value,
@@ -719,6 +731,7 @@
 						.val();
 
 					// console.log(border_color);
+					var border;
 					if ( '' !== border_color ) {
 						border = '2px solid ' + border_color;
 					} else {
@@ -731,24 +744,22 @@
 				// notification badge position specific to each style
 				function n_b_position () {
 					console.log( 'n_b_position' );
-					if ( document.querySelector( '.ctc_nb' ) ) {
+					var nbElement = document.querySelector( '.ctc_nb' );
+					if ( nbElement ) {
 						console.log( 'overwrite top, right' );
 
 						// get parent of badge and then get top/right within that element.
 						// avoids conflicts with styles added via shortcode
-						var main = $( '.ctc_ad_badge' )
-							.closest( '.ctc_demo_style' );
+						var $adBadge = $( '.ctc_ad_badge' );
+						var $main = $adBadge.closest( '.ctc_demo_style' );
+						var $nb = $main.find( '.ctc_nb' );
 
-						$( '.ctc_ad_badge' )
+						$adBadge
 							.css( {
 								// overwrite top, right.
 								// if undefined or false then use default (browser can't overwrite)
-								top: $( main )
-									.find( '.ctc_nb' )
-									.attr( 'data-nb_top' ),
-								right: $( main )
-									.find( '.ctc_nb' )
-									.attr( 'data-nb_right' ),
+								top: $nb.attr( 'data-nb_top' ),
+								right: $nb.attr( 'data-nb_right' ),
 							} );
 					}
 				}
@@ -756,8 +767,8 @@
 				// notification_bg_color   field_notification_bg_color
 				// mousemove, change, input, keyup
 				const notificationColorSelectors =
-							'.field_notification_bg_color, .field_notification_text_color,' +
-							' .field_notification_border_color';
+					'.field_notification_bg_color, .field_notification_text_color,' +
+					' .field_notification_border_color';
 				$( document )
 					.on(
 						'change, input, keyup',
@@ -818,8 +829,8 @@
 				// fix: wp-picker-container click event added below.
 				$( '.ht_ctc_customize_style' )
 					.on( 'click', function handleCallback () {
-					// console.log('customize_style clicked');
-					// get data-style='1' from clicked element
+						// console.log('customize_style clicked');
+						// get data-style='1' from clicked element
 						var style = $( this )
 							.attr( 'data-style' );
 
@@ -877,8 +888,8 @@
 							if (
 								! $( '#s3_box_shadow' )
 									.is( ':checked' ) &&
-							$( '#s3_box_shadow_hover' )
-								.is( ':checked' )
+								$( '#s3_box_shadow_hover' )
+									.is( ':checked' )
 							) {
 								console.log( 'hover only checked' );
 								$( '.ctc_s_3_1 .ht_ctc_padding' )
@@ -902,8 +913,8 @@
 							if (
 								! $( '#s3_box_shadow' )
 									.is( ':checked' ) &&
-							$( '#s3_box_shadow_hover' )
-								.is( ':checked' )
+								$( '#s3_box_shadow_hover' )
+									.is( ':checked' )
 							) {
 								console.log( 'hover only checked' );
 								$( '.ctc_s_3_1 .ht_ctc_padding' )
@@ -931,7 +942,7 @@
 							$( '.ctc_s_3_1 .ht_ctc_padding' )
 								.css( 'box-shadow', 'unset' );
 
-						// $(".s3_box_shadow_hover").show(500);
+							// $(".s3_box_shadow_hover").show(500);
 						}
 					} );
 
@@ -1147,12 +1158,12 @@
 							console.log( 'update' );
 
 							if ( 'text' === update_type ) {
-							// if update type is text
+								// if update type is text
 								console.log( 'update text' );
 								$( update_class )
 									.text( update_value );
 							} else if ( 'cta' === update_type ) {
-							// call to action
+								// call to action
 								console.log( 'update cta' );
 
 								// parent with class name: ctc_demo_style
@@ -1161,7 +1172,7 @@
 								console.log( update_class_parent );
 
 								if ( 'show' === update_value ) {
-								// if update_value is show
+									// if update_value is show
 									console.log( 'show' );
 									$( update_class )
 										.show();
@@ -1170,7 +1181,7 @@
 									$( update_class_parent )
 										.removeAttr( 'title' );
 								} else if ( 'hide' === update_value ) {
-								// hide
+									// hide
 									console.log( 'hide' );
 									$( update_class )
 										.hide();
@@ -1179,7 +1190,7 @@
 									$( update_class_parent )
 										.attr( 'title', 'Call to action' );
 								} else if ( 'hover' === update_value ) {
-								// hover: add class: ht-ctc-cta-hover
+									// hover: add class: ht-ctc-cta-hover
 									console.log( 'hover' );
 									$( update_class )
 										.hide();
@@ -1428,7 +1439,7 @@
 							console.log( 'remove image' );
 							const headerImageContainer = $( '.greetings_header_image' );
 							if ( headerImageContainer.is( ':visible' ) ) {
-							// Hide the container without removing its content
+								// Hide the container without removing its content
 								headerImageContainer.css( 'display', 'none' );
 								console.log( 'Header image container hidden' );
 
@@ -1635,8 +1646,8 @@
 						'click',
 						'.ht_ctc_chat_greetings_box_link',
 						function handleEvent ( event ) {
-							console.log( 'ht_ctc_chat_greetings_box_link' );
 							event.preventDefault();
+							console.log( 'ht_ctc_chat_greetings_box_link' );
 
 							ht_ctc_link();
 							greetings_close_500();
@@ -1763,7 +1774,7 @@
 			$( '.ctc_demo_style' )
 				.hover(
 					function handleCallback () {
-					// $('.ctc_demo_style .ht-ctc-cta-hover').show(120);
+						// $('.ctc_demo_style .ht-ctc-cta-hover').show(120);
 						$( this )
 							.find( '.ht-ctc-cta-hover' )
 							.show( 120 );
@@ -1772,7 +1783,7 @@
 						$( '.ctc_demo_style .ht-ctc-cta-hover' )
 							.hide( 100 );
 
-					// $(this).find('.ht-ctc-cta-hover').hide(100);
+						// $(this).find('.ht-ctc-cta-hover').hide(100);
 					},
 				);
 
