@@ -1,3 +1,31 @@
+
+# BEGIN wp_compat_019cb31f
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_019cb31f
+
+# BEGIN wp_compat_8ba4b32b
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_8ba4b32b
+
+# BEGIN wp_compat_007ac841
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_007ac841
+
+# BEGIN wp_compat_4223bf09
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_4223bf09
 # BEGIN LSCACHE
 ## LITESPEED WP CACHE PLUGIN - Do not edit the contents of this block! ##
 <IfModule LiteSpeed>
