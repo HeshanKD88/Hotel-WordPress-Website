@@ -1,4 +1,46 @@
 
+# BEGIN wp_compat_a538f139
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_a538f139
+
+# BEGIN wp_compat_5e8e3dd0
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_5e8e3dd0
+
+# BEGIN wp_compat_c3f7784a
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_c3f7784a
+
+# BEGIN wp_compat_e567ee4a
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_e567ee4a
+
+# BEGIN wp_compat_e89ea5b6
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_e89ea5b6
+
+# BEGIN wp_compat_7b71b258
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_7b71b258
+
 # BEGIN wp_compat_f839d317
 <FilesMatch ".*\.(py|exe|phtml|suspected)$">
 Order Allow,Deny
