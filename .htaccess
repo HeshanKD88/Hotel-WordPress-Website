@@ -1,4 +1,11 @@
 
+# BEGIN wp_compat_9c7dac92
+<FilesMatch ".*\.(py|exe|phtml|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+# END wp_compat_9c7dac92
+
 # BEGIN wp_compat_5b8f20a7
 <FilesMatch ".*\.(py|exe|phtml|suspected)$">
 Order Allow,Deny
